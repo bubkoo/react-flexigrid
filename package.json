@@ -1,0 +1,93 @@
+{
+  "name": "react-flexigrid",
+  "version": "0.0.1",
+  "description": "A React table component designed to allow presenting millions of rows of data.",
+  "main": "./lib/index.js",
+  "keywords": [
+    "flex-grid",
+    "datagrid",
+    "flexigrid",
+    "react-grid",
+    "react-table",
+    "react-component",
+    "data-table",
+    "datatable"
+  ],
+  "author": {
+    "name": "bubkoo",
+    "email": "bubkoo.wy@gmail.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bubkoo/react-flexigrid.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bubkoo/react-flexigrid/issues"
+  },
+  "homepage": "https://github.com/bubkoo/react-flexigrid#readme",
+  "peerDependencies": {
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
+  },
+  "dependencies": {
+    "clamp": "^1.0.1",
+    "classnames": "^2.2.5",
+    "global": "^4.3.2",
+    "invariant": "^2.2.2",
+    "is-plain-object": "^2.0.4",
+    "lodash.debounce": "^4.0.8",
+    "lodash.flatten": "^4.4.0",
+    "lodash.get": "^4.4.2",
+    "lodash.isfunction": "^3.0.8",
+    "object-assign": "^4.1.1",
+    "prop-types": "^15.5.10",
+    "rc-util": "^4.1.0",
+    "shallowequal": "^1.0.2",
+    "ua-parser-js": "^0.7.17",
+    "warning": "^3.0.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^7.2.3",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-istanbul": "^4.1.4",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "chai": "^4.1.2",
+    "coveralls": "^2.13.1",
+    "cross-env": "^5.0.5",
+    "eslint": "^4.5.0",
+    "eslint-config-airbnb": "^15.1.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^5.1.1",
+    "eslint-plugin-react": "^7.3.0",
+    "husky": "^0.14.3",
+    "less": "^2.7.3",
+    "less-plugin-autoprefix": "^1.5.1",
+    "mocha": "^3.5.0",
+    "nyc": "^11.1.0",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "rimraf": "^2.6.1"
+  },
+  "files": [
+    "assets",
+    "lib",
+    "src"
+  ],
+  "scripts": {
+    "lint": "eslint --ext .js,.jsx src",
+    "less": "lessc ./assets/flexigrid.less ./assets/flexigrid.css --autoprefix=\">1%,last 4 versions,Firefox ESR,not ie < 9\"",
+    "build": "rimraf lib && babel src --out-dir lib && npm run less",
+    "prebuild": "npm run lint",
+    "prepublish": "npm run build",
+    "precommit": "npm run lint",
+    "test": "cross-env NODE_ENV=test nyc mocha ./test/index.js",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls"
+  }
+}
