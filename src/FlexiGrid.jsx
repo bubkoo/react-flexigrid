@@ -423,22 +423,23 @@ export default class FlexiGrid extends React.Component {
       const { leftFixedColumns, rightFixedColumns } = columnData
 
       // auto scroll on moving
+      let scrollTo = scrollX
       if (movingLeft) {
         if (
           scrollX > 0 &&
           position < getColumnsWidth(leftFixedColumns) + dragScrollBuffer
         ) {
-          this.setNextState({
-            scrollX: Math.max(scrollX - dragScrollSpeed, 0),
-          })
+          scrollTo = Math.max(scrollX - dragScrollSpeed, 0)
         }
       } else if (
         scrollX < maxScrollX &&
         position + column.width > bodyWidth - getColumnsWidth(rightFixedColumns) - dragScrollBuffer
       ) {
-        this.setNextState({
-          scrollX: Math.min(scrollX + dragScrollSpeed, maxScrollX),
-        })
+        scrollTo = Math.min(scrollX + dragScrollSpeed, maxScrollX)
+      }
+
+      if (scrollTo !== scrollX) {
+        this.doHorizontalScroll(scrollTo, false)
       }
     }
 
