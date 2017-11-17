@@ -3,442 +3,445 @@
 @border-color-highlight: #108ee9;
 @background-color: #fafafa;
 
-.@{prefix} {
-  position: relative;
-  border: 1px solid @border-color;
-  text-align: left;
+:global {
 
-  &,
-  .@{prefix}-container,
-  .@{prefix}-header,
-  .@{prefix}-body,
-  .@{prefix}-footer,
-  .@{prefix}-row-wrap,
-  .@{prefix}-row,
-  .@{prefix}-cells-group-wrap,
-  .@{prefix}-cells-group,
-  .@{prefix}-cell,
-  .@{prefix}-cell-wrap1,
-  .@{prefix}-cell-content,
-  .@{prefix}-header-end-sapce,
-  .@{prefix}-header-merged-cells-wrap,
-  .@{prefix}-header-merged-cells,
-  .@{prefix}-shadow,
-  .@{prefix}-scroll,
-  .@{prefix}-reorder-handler,
-  .@{prefix}-reorder-handler > .drop-target,
-  .@{prefix}-reorder-handler > .source-mask,
-  .@{prefix}-reorder-handler > .drag-proxy,
-  .@{prefix}-reorder-handler > .target-marker,
-  .@{prefix}-resize-handler,
-  .@{prefix}-resize-handler > .knob-marker,
-  .@{prefix}-resize-knob,
-  .@{prefix}-resize-knob-marker,
-  .@{prefix}-reorder-knob {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    box-sizing: border-box;
-  }
-
-  .@{prefix}-container,
-  .@{prefix}-header,
-  .@{prefix}-body,
-  .@{prefix}-footer,
-  .@{prefix}-row {
+  .@{prefix} {
     position: relative;
-  }
+    border: 1px solid @border-color;
+    text-align: left;
 
-  .@{prefix}-header,
-  .@{prefix}-reorder-handler > .drag-proxy {
-    .@{prefix}-cell {
+    &,
+    .@{prefix}-container,
+    .@{prefix}-header,
+    .@{prefix}-body,
+    .@{prefix}-footer,
+    .@{prefix}-row-wrap,
+    .@{prefix}-row,
+    .@{prefix}-cells-group-wrap,
+    .@{prefix}-cells-group,
+    .@{prefix}-cell,
+    .@{prefix}-cell-wrap1,
+    .@{prefix}-cell-content,
+    .@{prefix}-header-end-sapce,
+    .@{prefix}-header-merged-cells-wrap,
+    .@{prefix}-header-merged-cells,
+    .@{prefix}-shadow,
+    .@{prefix}-scroll,
+    .@{prefix}-reorder-handler,
+    .@{prefix}-reorder-handler > .drop-target,
+    .@{prefix}-reorder-handler > .source-mask,
+    .@{prefix}-reorder-handler > .drag-proxy,
+    .@{prefix}-reorder-handler > .target-marker,
+    .@{prefix}-resize-handler,
+    .@{prefix}-resize-handler > .knob-marker,
+    .@{prefix}-resize-knob,
+    .@{prefix}-resize-knob-marker,
+    .@{prefix}-reorder-knob {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    .@{prefix}-container,
+    .@{prefix}-header,
+    .@{prefix}-body,
+    .@{prefix}-footer,
+    .@{prefix}-row {
+      position: relative;
+    }
+
+    .@{prefix}-header,
+    .@{prefix}-reorder-handler > .drag-proxy {
+      .@{prefix}-cell {
+        background-color: @background-color;
+      }
+    }
+
+    .@{prefix}-header-end-sapce {
+      position: absolute;
+      top: 0;
+      right: 0;
+      border-left: 1px solid @border-color;
       background-color: @background-color;
     }
-  }
 
-  .@{prefix}-header-end-sapce {
-    position: absolute;
-    top: 0;
-    right: 0;
-    border-left: 1px solid @border-color;
-    background-color: @background-color;
-  }
+    .@{prefix}-header-merged-cells-wrap {
+      position: absolute;
+      top: 0;
+    }
 
-  .@{prefix}-header-merged-cells-wrap {
-    position: absolute;
-    top: 0;
-  }
+    .@{prefix}-header-merged-cells {
+      position: absolute;
+      left: 0;
+    }
 
-  .@{prefix}-header-merged-cells {
-    position: absolute;
-    left: 0;
-  }
+    .@{prefix}-row-wrap,
+    .@{prefix}-cells-group {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
 
-  .@{prefix}-row-wrap,
-  .@{prefix}-cells-group {
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
+    .@{prefix}-row.odd {
+      .@{prefix}-cell {
+        background-color: #f6f7f8;
+      }
+    }
 
-  .@{prefix}-row.odd {
+    .@{prefix}-cells-group-wrap {
+      position: absolute;
+      top: 0;
+    }
+
     .@{prefix}-cell {
-      background-color: #f6f7f8;
+      position: absolute;
+      top: 0;
+      display: inline-block;
+      vertical-align: top;
+      white-space: nowrap;
+      background-color: #fff;
+
+      &.align-left {
+        text-align: left;
+      }
+
+      &.align-center {
+        text-align: center;
+      }
+
+      &.align-right {
+        text-align: right;
+      }
+
+      > .@{prefix}-cell-wrap1 {
+        display: table;
+
+        > .@{prefix}-cell-wrap2 {
+          display: table-row;
+
+          > .@{prefix}-cell-wrap3 {
+            display: table-cell;
+            vertical-align: middle;
+          }
+        }
+      }
     }
-  }
 
-  .@{prefix}-cells-group-wrap {
-    position: absolute;
-    top: 0;
-  }
-
-  .@{prefix}-cell {
-    position: absolute;
-    top: 0;
-    display: inline-block;
-    vertical-align: top;
-    white-space: nowrap;
-    background-color: #fff;
-
-    &.align-left {
-      text-align: left;
+    .@{prefix}-cell-content {
+      position: relative;
+      padding: 8px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
-    &.align-center {
-      text-align: center;
+    .@{prefix}-shadow {
+      position: absolute;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+
+      &.visible {
+        opacity: 1;
+      }
     }
 
-    &.align-right {
-      text-align: right;
+    .@{prefix}-shadow.top,
+    .@{prefix}-shadow.bottom {
+      left: 0;
+      height: 0;
     }
 
-    > .@{prefix}-cell-wrap1 {
-      display: table;
+    .@{prefix}-shadow.right,
+    .@{prefix}-shadow.left {
+      top: 0;
+      width: 8px;
+    }
 
-      > .@{prefix}-cell-wrap2 {
-        display: table-row;
+    .@{prefix}-shadow.right {
+      margin-right: -1px;
+      border-right: 1px solid transparent;
+      background: linear-gradient(to left, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+    }
 
-        > .@{prefix}-cell-wrap3 {
-          display: table-cell;
-          vertical-align: middle;
+    .@{prefix}-shadow.left {
+      margin-left: -1px;
+      border-left: 1px solid transparent;
+      background: linear-gradient(to right, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+    }
+
+    .@{prefix}-resize-wrap,
+    .@{prefix}-reorder-wrap,
+    .@{prefix}-reorder-handler {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    .@{prefix}-resize-wrap {
+      .@{prefix}-resize-knob {
+        position: absolute;
+        cursor: ew-resize;
+        background: transparent;
+
+        .@{prefix}-resize-knob-marker {
+          position: absolute;
+          left: 2px;
+          top: 0;
+          bottom: 0;
+          width: 1px;
+          background: @border-color-highlight;
+          opacity: 0;
+        }
+
+        &:hover .@{prefix}-resize-knob-marker {
+          opacity: 1;
+        }
+      }
+    }
+
+    .@{prefix}-resize-handler {
+      display: none;
+      position: absolute;
+      z-index: 9;
+      background-color: rgba(0, 0, 0, 0.05);
+
+      &.visible {
+        display: block;
+      }
+
+      .knob-marker {
+        position: absolute;
+        width: 1px;
+        border-right: 1px solid @border-color-highlight;
+      }
+
+      .mouse-area {
+        cursor: ew-resize;
+        position: absolute;
+      }
+    }
+
+    .@{prefix}-reorder-knob {
+      position: absolute;
+      cursor: hand;
+      cursor: -webkit-grab;
+      background: #f0f0f0;
+      border-right: 1px solid @border-color;
+
+      &:hover {
+        background: #efefef;
+
+        &::before,
+        &::after {
+          color: #666;
+        }
+      }
+
+      &::before,
+      &::after {
+        position: absolute;
+        top: 50%;
+        content: '…';
+        display: inline-block;
+        margin-top: -6px;
+        transform: rotate(90deg);
+        font-size: 12px;
+        line-height: 1;
+        color: #ccc;
+        transition: color 0.3s ease;
+      }
+
+      &::before {
+        left: 2px;
+      }
+
+      &::after {
+        left: 5px;
+      }
+    }
+
+    .@{prefix}-reorder-handler {
+      cursor: hand;
+      cursor: -webkit-grab;
+      z-index: 9;
+      display: none;
+
+      &.visible {
+        display: block;
+      }
+
+      .drop-target {
+        position: absolute;
+      }
+
+      .source-mask {
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+
+      .drag-proxy {
+        position: absolute;
+        border-left: 1px solid @border-color;
+        margin-left: -1px;
+        box-shadow: 1px 0 0 0 @border-color, 0 0 10px rgba(0, 0, 0, 0.15);
+
+        .@{prefix}-reorder-knob.active::before,
+        .@{prefix}-reorder-knob.active::after {
+          color: @border-color-highlight;
+        }
+      }
+
+      .target-marker {
+        position: absolute;
+        width: 6px;
+
+        &::after {
+          position: absolute;
+          left: 0;
+          top: 50%;
+          margin-top: -6px;
+          content: '';
+          width: 0;
+          height: 0;
+          border-style: solid;
+        }
+
+        &.is-left {
+          margin-left: 13px;
+        }
+
+        &.is-left::after {
+          border-width: 6px 6px 6px 0;
+          border-color: transparent @border-color-highlight transparent transparent;
+        }
+
+        &.is-right {
+          margin-right: 1px;
+        }
+
+        &.is-right::after {
+          border-width: 6px 0 6px 6px;
+          border-color: transparent transparent transparent @border-color-highlight;
         }
       }
     }
   }
 
-  .@{prefix}-cell-content {
-    position: relative;
-    padding: 8px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
-  .@{prefix}-shadow {
+  .@{prefix}-scroll {
     position: absolute;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    outline: none;
+    user-select: none;
+    transition: all 0.3s ease;
 
-    &.visible {
-      opacity: 1;
-    }
-  }
-
-  .@{prefix}-shadow.top,
-  .@{prefix}-shadow.bottom {
-    left: 0;
-    height: 0;
-  }
-
-  .@{prefix}-shadow.right,
-  .@{prefix}-shadow.left {
-    top: 0;
-    width: 8px;
-  }
-
-  .@{prefix}-shadow.right {
-    margin-right: -1px;
-    border-right: 1px solid transparent;
-    background: linear-gradient(to left, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
-  }
-
-  .@{prefix}-shadow.left {
-    margin-left: -1px;
-    border-left: 1px solid transparent;
-    background: linear-gradient(to right, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
-  }
-
-  .@{prefix}-resize-wrap,
-  .@{prefix}-reorder-wrap,
-  .@{prefix}-reorder-handler {
-    position: absolute;
-    left: 0;
-    top: 0;
-  }
-
-  .@{prefix}-resize-wrap {
-    .@{prefix}-resize-knob {
+    .@{prefix}-scroll-face {
       position: absolute;
-      cursor: ew-resize;
-      background: transparent;
-
-      .@{prefix}-resize-knob-marker {
-        position: absolute;
-        left: 2px;
-        top: 0;
-        bottom: 0;
-        width: 1px;
-        background: @border-color-highlight;
-        opacity: 0;
-      }
-
-      &:hover .@{prefix}-resize-knob-marker {
-        opacity: 1;
-      }
-    }
-  }
-
-  .@{prefix}-resize-handler {
-    display: none;
-    position: absolute;
-    z-index: 9;
-    background-color: rgba(0, 0, 0, 0.05);
-
-    &.visible {
-      display: block;
-    }
-
-    .knob-marker {
-      position: absolute;
-      width: 1px;
-      border-right: 1px solid @border-color-highlight;
-    }
-
-    .mouse-area {
-      cursor: ew-resize;
-      position: absolute;
-    }
-  }
-
-  .@{prefix}-reorder-knob {
-    position: absolute;
-    cursor: hand;
-    cursor: -webkit-grab;
-    background: #f0f0f0;
-    border-right: 1px solid @border-color;
-
-    &:hover {
-      background: #efefef;
-
-      &::before,
-      &::after {
-        color: #666;
-      }
-    }
-
-    &::before,
-    &::after {
-      position: absolute;
-      top: 50%;
-      content: '…';
-      display: inline-block;
-      margin-top: -6px;
-      transform: rotate(90deg);
-      font-size: 12px;
-      line-height: 1;
-      color: #ccc;
-      transition: color 0.3s ease;
-    }
-
-    &::before {
-      left: 2px;
-    }
-
-    &::after {
-      left: 5px;
-    }
-  }
-
-  .@{prefix}-reorder-handler {
-    cursor: hand;
-    cursor: -webkit-grab;
-    z-index: 9;
-    display: none;
-
-    &.visible {
-      display: block;
-    }
-
-    .drop-target {
-      position: absolute;
-    }
-
-    .source-mask {
-      position: absolute;
-      background-color: rgba(0, 0, 0, 0.05);
-    }
-
-    .drag-proxy {
-      position: absolute;
-      border-left: 1px solid @border-color;
-      margin-left: -1px;
-      box-shadow: 1px 0 0 0 @border-color, 0 0 10px rgba(0, 0, 0, 0.15);
-
-      .@{prefix}-reorder-knob.active::before,
-      .@{prefix}-reorder-knob.active::after {
-        color: @border-color-highlight;
-      }
-    }
-
-    .target-marker {
-      position: absolute;
-      width: 6px;
+      z-index: 1;
+      overflow: hidden;
 
       &::after {
+        display: block;
         position: absolute;
-        left: 0;
-        top: 50%;
-        margin-top: -6px;
+        border-radius: 6px;
         content: '';
-        width: 0;
-        height: 0;
-        border-style: solid;
-      }
-
-      &.is-left {
-        margin-left: 13px;
-      }
-
-      &.is-left::after {
-        border-width: 6px 6px 6px 0;
-        border-color: transparent @border-color-highlight transparent transparent;
-      }
-
-      &.is-right {
-        margin-right: 1px;
-      }
-
-      &.is-right::after {
-        border-width: 6px 0 6px 6px;
-        border-color: transparent transparent transparent @border-color-highlight;
+        background-color: #c2c2c2;
+        transition: all 0.3s ease;
       }
     }
-  }
-}
 
-.@{prefix}-scroll {
-  position: absolute;
-  outline: none;
-  user-select: none;
-  transition: all 0.3s ease;
-
-  .@{prefix}-scroll-face {
-    position: absolute;
-    z-index: 1;
-    overflow: hidden;
-
-    &::after {
-      display: block;
-      position: absolute;
-      border-radius: 6px;
-      content: '';
-      background-color: #c2c2c2;
-      transition: all 0.3s ease;
-    }
-  }
-
-  &.vertical {
-    bottom: 0;
-    right: 0;
-    top: 0;
-    border-left: 1px solid @border-color;
-  }
-
-  &.horizontal {
-    bottom: 0;
-    left: 0;
-    border-top: 1px solid @border-color;
-  }
-
-  &.opaque {
-    background-color: #fff;
-  }
-
-  &:hover,
-  &.active {
-    .@{prefix}-scroll-face::after {
-      background-color: #7d7d7d;
-    }
-  }
-}
-
-.@{prefix}-scroll.vertical {
-  .@{prefix}-scroll-face {
-    left: 0;
-    right: 0;
-    top: 0;
-
-    &::after {
-      height: 100%;
-      left: 4px;
-      right: 4px;
+    &.vertical {
+      bottom: 0;
+      right: 0;
       top: 0;
+      border-left: 1px solid @border-color;
     }
-  }
 
-  &.active .@{prefix}-scroll-face::after,
-  &:hover .@{prefix}-scroll-face::after {
-    transform: scaleX(1.5);
-    border-radius: 9px;
-  }
-}
-
-.@{prefix}-scroll.horizontal {
-  .@{prefix}-scroll-face {
-    bottom: 0;
-    left: 0;
-    top: 0;
-
-    &::after {
-      bottom: 4px;
-      top: 4px;
+    &.horizontal {
+      bottom: 0;
       left: 0;
-      width: 100%;
+      border-top: 1px solid @border-color;
+    }
+
+    &.opaque {
+      background-color: #fff;
+    }
+
+    &:hover,
+    &.active {
+      .@{prefix}-scroll-face::after {
+        background-color: #7d7d7d;
+      }
     }
   }
 
-  &.active .@{prefix}-scroll-face::after,
-  &:hover .@{prefix}-scroll-face::after {
-    transform: scaleY(1.5);
-    border-radius: 9px;
-  }
-}
+  .@{prefix}-scroll.vertical {
+    .@{prefix}-scroll-face {
+      left: 0;
+      right: 0;
+      top: 0;
 
-.@{prefix}.bordered {
-  .@{prefix}-header {
-    border-bottom: 1px solid @border-color;
-  }
+      &::after {
+        height: 100%;
+        left: 4px;
+        right: 4px;
+        top: 0;
+      }
+    }
 
-  .@{prefix}-cell {
-    border-color: @border-color;
-    border-style: solid;
-    border-width: 0 1px 1px 0;
-  }
-
-  .@{prefix}-cell.no-right-border {
-    border-right-width: 0;
-  }
-}
-
-.@{prefix}.reorderable {
-  .@{prefix}-header .@{prefix}-cell.unreorderable .@{prefix}-cell-content {
-    padding-left: 8px;
+    &.active .@{prefix}-scroll-face::after,
+    &:hover .@{prefix}-scroll-face::after {
+      transform: scaleX(1.5);
+      border-radius: 9px;
+    }
   }
 
-  .@{prefix}-header,
-  .@{prefix}-reorder-handler > .drag-proxy {
-    .@{prefix}-cell-content {
-      padding-left: 20px;
+  .@{prefix}-scroll.horizontal {
+    .@{prefix}-scroll-face {
+      bottom: 0;
+      left: 0;
+      top: 0;
+
+      &::after {
+        bottom: 4px;
+        top: 4px;
+        left: 0;
+        width: 100%;
+      }
+    }
+
+    &.active .@{prefix}-scroll-face::after,
+    &:hover .@{prefix}-scroll-face::after {
+      transform: scaleY(1.5);
+      border-radius: 9px;
+    }
+  }
+
+  .@{prefix}.bordered {
+    .@{prefix}-header {
+      border-bottom: 1px solid @border-color;
+    }
+
+    .@{prefix}-cell {
+      border-color: @border-color;
+      border-style: solid;
+      border-width: 0 1px 1px 0;
+    }
+
+    .@{prefix}-cell.no-right-border {
+      border-right-width: 0;
+    }
+  }
+
+  .@{prefix}.reorderable {
+    .@{prefix}-header .@{prefix}-cell.unreorderable .@{prefix}-cell-content {
+      padding-left: 8px;
+    }
+
+    .@{prefix}-header,
+    .@{prefix}-reorder-handler > .drag-proxy {
+      .@{prefix}-cell-content {
+        padding-left: 20px;
+      }
     }
   }
 }

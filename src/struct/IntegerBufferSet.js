@@ -13,27 +13,28 @@ export default class IntegerBufferSet {
     return this.size
   }
 
-  getPositionForValue(value) {
-    const position = this.valuePositionMap[value]
+  getPositionForValue(index) {
+    const position = this.valuePositionMap[index]
     return position === undefined ? null : position
   }
 
-  getNewPositionForValue(value) {
+  getNewPositionForValue(index) {
     invariant(
-      this.valuePositionMap[value] === undefined,
+      this.valuePositionMap[index] === undefined,
       "Shouldn't try to find new position for value already stored in BufferSet",
     )
 
     const newPosition = this.size
     this.size += 1
-    this.pushToHeaps(newPosition, value)
-    this.valuePositionMap[value] = newPosition
+    this.pushToHeaps(newPosition, index)
+    this.valuePositionMap[index] = newPosition
+
     return newPosition
   }
 
-  replaceFurthestValuePosition(lowValue, highValue, newValue) {
+  replaceFurthestValuePosition(smallIndex, bigIndex, newIndex) {
     invariant(
-      this.valuePositionMap[newValue] === undefined,
+      this.valuePositionMap[newIndex] === undefined,
       "Shouldn't try to replace values with value already stored value in BufferSet",
     )
 
@@ -45,26 +46,27 @@ export default class IntegerBufferSet {
       return null
     }
 
-    const minValue = this.smallValues.peek().value
-    const maxValue = this.largeValues.peek().value
-    if (minValue >= lowValue && maxValue <= highValue) {
+    const minIndex = this.smallValues.peek().value
+    const maxIndex = this.largeValues.peek().value
+    if (minIndex >= smallIndex && maxIndex <= bigIndex) {
       // All values currently stored are necessary, we can't reuse any of them.
       return null
     }
 
     let valueToReplace
-    if (lowValue - minValue > maxValue - highValue) {
+    if (smallIndex - minIndex > maxIndex - bigIndex) {
       // minValue is further from provided range. We will reuse it's position.
-      valueToReplace = minValue
+      valueToReplace = minIndex
       this.smallValues.pop()
     } else {
-      valueToReplace = maxValue
+      valueToReplace = maxIndex
       this.largeValues.pop()
     }
+
     const position = this.valuePositionMap[valueToReplace]
     delete this.valuePositionMap[valueToReplace]
-    this.valuePositionMap[newValue] = position
-    this.pushToHeaps(position, newValue)
+    this.valuePositionMap[newIndex] = position
+    this.pushToHeaps(position, newIndex)
 
     return position
   }

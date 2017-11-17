@@ -1,4 +1,5 @@
 /* eslint-disable react/require-default-props */
+
 import React from 'react'
 import PropTypes from 'prop-types'
 import invariant from 'invariant'
@@ -7,7 +8,9 @@ import propTypes from './struct/propTypes'
 import WheelHandler from './dom/WheelHandler'
 import TouchHandler from './dom/TouchHandler'
 import Scrollbar from './Scrollbar'
-import ScrollHelper from './FlexiGridScrollHelper'
+import VerticalScrollHelper from './FlexiGridVerticalScrollHelper'
+import HorizontalScrollHelper from './FlexiGridHorizontalScrollHelper'
+import FlexiGridColumnBuffer from './FlexiGridColumnBuffer'
 import FlexiGridHeader from './FlexiGridHeader'
 import FlexiGridBody from './FlexiGridBody'
 import FlexiGridShadowTop from './FlexiGridShadowTop'
@@ -31,6 +34,7 @@ export default class FlexiGrid extends React.Component {
     data: propTypes.data.isRequired,
     rowKey: PropTypes.string.isRequired,
     bufferRowCount: PropTypes.number,
+    bufferColumnCount: PropTypes.number,
 
     bordered: PropTypes.bool,
     borderSize: PropTypes.number,
@@ -50,8 +54,8 @@ export default class FlexiGrid extends React.Component {
     subRow: propTypes.render,
     footer: propTypes.render,
 
-    scrollLeft: PropTypes.number,
     scrollTop: PropTypes.number,
+    scrollLeft: PropTypes.number,
     scrollToColumn: PropTypes.number,
     scrollToRow: PropTypes.number,
     showScrollbarX: PropTypes.bool,
@@ -112,7 +116,7 @@ export default class FlexiGrid extends React.Component {
     reorderKnobSize: 12,
     reorderFactor: 3 / 4,
     dragScrollBuffer: 50,
-    dragScrollSpeed: 10,
+    dragScrollSpeed: 15,
   }
 
   componentWillMount() {
@@ -131,7 +135,7 @@ export default class FlexiGrid extends React.Component {
       this.props.stopScrollPropagation,
     )
 
-    this.setState(this.calculateState(this.props))
+    this.setNextState(this.calculateState(this.props))
   }
 
   componentDidMount() {
@@ -169,25 +173,9 @@ export default class FlexiGrid extends React.Component {
     }
 
     if (Math.abs(deltaY) > Math.abs(deltaX) && this.state.showScrollbarY) {
-      const scrollState = this.scrollHelper.scrollBy(Math.round(deltaY))
-      const onVerticalScroll = this.props.onVerticalScroll
-      if (onVerticalScroll ? onVerticalScroll(scrollState.position) : true) {
-        const maxScrollY = Math.max(0, scrollState.contentHeight - this.state.bodyHeight)
-        this.setNextState({
-          firstRowIndex: scrollState.index,
-          firstRowOffset: scrollState.offset,
-          scrollY: scrollState.position,
-          contentHeight: scrollState.contentHeight,
-          maxScrollY,
-        })
-      }
+      this.doVerticalScroll(deltaY, true)
     } else if (deltaX && this.state.showScrollbarX) {
-      const scrollX = clamp(this.state.scrollX + deltaX, 0, this.state.maxScrollX)
-      // NOTE (asif) This is a hacky workaround to prevent FDT from setting its internal state
-      const onHorizontalScroll = this.props.onHorizontalScroll
-      if (onHorizontalScroll ? onHorizontalScroll(scrollX) : true) {
-        this.setNextState({ scrollX })
-      }
+      this.doHorizontalScroll(deltaX, true)
     }
 
     this.didScrollStop()
@@ -202,10 +190,7 @@ export default class FlexiGrid extends React.Component {
       this.didScrollStart()
     }
 
-    const onHorizontalScroll = this.props.onHorizontalScroll
-    if (onHorizontalScroll ? onHorizontalScroll(scrollX) : true) {
-      this.setNextState({ scrollX })
-    }
+    this.doHorizontalScroll(scrollX, false)
     this.didScrollStop()
   }
 
@@ -218,17 +203,57 @@ export default class FlexiGrid extends React.Component {
       this.didScrollStart()
     }
 
-    const scrollState = this.scrollHelper.scrollTo(Math.round(scrollY))
-    const onVerticalScroll = this.props.onVerticalScroll
-    if (onVerticalScroll ? onVerticalScroll(scrollState.position) : true) {
-      this.setNextState({
-        firstRowIndex: scrollState.index,
-        firstRowOffset: scrollState.offset,
-        scrollY: scrollState.position,
-        contentHeight: scrollState.contentHeight,
-      })
-      this.didScrollStop()
+    this.doVerticalScroll(scrollY, false)
+    this.didScrollStop()
+  }
+
+  doHorizontalScroll(scrollX, relative) { // eslint-disable-line
+    const scrollState = relative
+      ? this.horizontalScrollHelper.scrollBy(Math.round(scrollX))
+      : this.horizontalScrollHelper.scrollTo(Math.round(scrollX))
+
+    const onHorizontalScroll = this.props.onHorizontalScroll
+    if (onHorizontalScroll) {
+      onHorizontalScroll(scrollState.position)
     }
+
+    const columnData = this.state.columnData
+    const contentWidth = columnData.leftFixedColumnsWidth +
+      columnData.rightFixedColumnsWidth +
+      scrollState.contentWidth
+    const maxScrollX = Math.max(0, contentWidth - this.state.bodyWidth)
+    const scrollableColumnsToRender = this.columnBuffer.getColumns(
+      scrollState.index,
+      scrollState.offset,
+    )
+
+    this.setNextState({
+      firstColumnIndex: scrollState.index,
+      firstColumnOffset: scrollState.offset,
+      scrollX: scrollState.position,
+      maxScrollX,
+      scrollableColumnsToRender,
+    })
+  }
+
+  doVerticalScroll(scrollY, relative) { // eslint-disable-line
+    const scrollState = relative
+      ? this.verticalScrollHelper.scrollBy(Math.round(scrollY))
+      : this.verticalScrollHelper.scrollTo(Math.round(scrollY))
+
+    const onVerticalScroll = this.props.onVerticalScroll
+    if (onVerticalScroll) {
+      onVerticalScroll(scrollState.position)
+    }
+
+    const maxScrollY = Math.max(0, scrollState.contentHeight - this.state.bodyHeight)
+    this.setNextState({
+      firstRowIndex: scrollState.index,
+      firstRowOffset: scrollState.offset,
+      contentHeight: scrollState.contentHeight,
+      scrollY: scrollState.position,
+      maxScrollY,
+    })
   }
 
   didScrollStart() { // eslint-disable-line
@@ -467,12 +492,13 @@ export default class FlexiGrid extends React.Component {
   }
 
   setNextState(nextState) {
-    const columnData = nextState && nextState.columnData
     const oldColumnData = this.state && this.state.columnData
+    const { scrollableColumnsToRender, columnData } = nextState
 
     let leftFixedColumnsUpdated = false
     let scrollableColumnsUpdated = false
     let rightFixedColumnsUpdated = false
+    let scrollableColumnsToRenderUpdated = false
 
     if (columnData && oldColumnData) {
       leftFixedColumnsUpdated = !(
@@ -495,12 +521,58 @@ export default class FlexiGrid extends React.Component {
       rightFixedColumnsUpdated = true
     }
 
-    this.setState({
+    if (this.state) {
+      scrollableColumnsToRenderUpdated = !(
+        scrollableColumnsToRender === this.state.scrollableColumnsToRender ||
+        deepEqual(scrollableColumnsToRender, this.state.scrollableColumnsToRender)
+      )
+    } else {
+      scrollableColumnsToRenderUpdated = true
+    }
+
+
+    const state = {
       ...nextState,
       leftFixedColumnsUpdated,
       scrollableColumnsUpdated,
       rightFixedColumnsUpdated,
-    })
+      scrollableColumnsToRenderUpdated,
+    }
+
+    if (scrollableColumnsToRender) {
+      const scrollableLeafColumns = columnData
+        ? columnData.scrollableLeafColumns
+        : oldColumnData.scrollableLeafColumns
+
+      const leafColumnsToRender = scrollableColumnsToRender.map(
+        index => ({
+          ...scrollableLeafColumns[index],
+          offsetLeft: this.horizontalScrollHelper.getColumnPosition(index),
+        }),
+      )
+      const parents = leafColumnsToRender.map((item) => {
+        let result = item
+        let parent = item.parent
+        while (parent) {
+          result = parent
+          parent = result.parent
+        }
+
+        return result
+      })
+
+      const columnsToRender = []
+      parents.forEach((item) => {
+        if (!columnsToRender.includes(item)) {
+          columnsToRender.push(item)
+        }
+      })
+
+      state.scrollableColumnsToRender = columnsToRender
+      state.scrollableLeafColumnsToRender = leafColumnsToRender
+    }
+
+    this.setState(state)
   }
 
   calculateState(props = this.props, oldState) {
@@ -521,19 +593,28 @@ export default class FlexiGrid extends React.Component {
 
     const columnData = parseColumns(props.columns, cachedColumnData)
     const rowCount = props.data.length
-    const borderSize = props.borderSize
-    const headerHeight = columnData.depth * props.rowHeight
+    const rowHeight = props.rowHeight
+    const reservedBorderSize = props.bordered ? 2 * props.borderSize : 0
+    const headerHeight = columnData.depth * rowHeight
+    const useMaxHeight = props.height === undefined
+    const realUseHeight = useMaxHeight ? props.maxHeight : props.height
+
     // the size of viewport includes scrollbars
-    const viewportWidth = props.bordered ? props.width - 2 * borderSize : props.width
-    const viewportHeight = (props.height === undefined ? props.maxHeight : props.height)
+    const viewportWidth = props.width - reservedBorderSize
+    const viewportHeight = realUseHeight
       - (headerHeight || 0)
       - (props.footerHeight || 0)
-      - (props.bordered ? 2 * borderSize : 0)
+      - reservedBorderSize
 
-    const adjustedWidth = props.width - Scrollbar.SIZE - Scrollbar.OFFSET
+    let firstRowIndex = (oldState && oldState.firstRowIndex) || 0
+    let firstRowOffset = (oldState && oldState.firstRowOffset) || 0
+    let firstColumnIndex = (oldState && oldState.firstColumnIndex) || 0
+    let firstColumnOffset = (oldState && oldState.firstColumnOffset) || 0
+    let scrollX = oldState ? oldState.scrollX : 0
+    let scrollY = oldState ? oldState.scrollY : 0
 
-    if (!this.scrollHelper) {
-      this.scrollHelper = new ScrollHelper(
+    if (!this.verticalScrollHelper) {
+      this.verticalScrollHelper = new VerticalScrollHelper(
         rowCount,
         props.rowHeight,
         viewportHeight,
@@ -543,24 +624,14 @@ export default class FlexiGrid extends React.Component {
       )
     }
 
-    let firstRowIndex = (oldState && oldState.firstRowIndex) || 0
-    let firstRowOffset = (oldState && oldState.firstRowOffset) || 0
-    let scrollX = oldState ? oldState.scrollX : 0
-    let scrollY = oldState ? oldState.scrollY : 0
-
-    const oldScrollLeft = oldState ? oldState.scrollLeft : 0
-    if (props.scrollLeft !== undefined && props.scrollLeft !== oldScrollLeft) {
-      scrollX = props.scrollLeft
-    }
-
-    const oldViewportHeight = this.scrollHelper.viewportHeight
+    const oldViewportHeight = this.verticalScrollHelper.viewportHeight
 
     if (oldState && (
       rowCount !== oldState.rowCount ||
       props.rowHeight !== oldState.rowHeight ||
       props.height !== oldState.height
     )) {
-      this.scrollHelper = new ScrollHelper(
+      this.verticalScrollHelper = new VerticalScrollHelper(
         rowCount,
         props.rowHeight,
         viewportHeight,
@@ -568,92 +639,59 @@ export default class FlexiGrid extends React.Component {
         props.subRowHeight,
         props.getSubRowHeight,
       )
-      const scrollState = this.scrollHelper.scrollToRow(firstRowIndex, firstRowOffset)
+      const scrollState = this.verticalScrollHelper.scrollToRow(firstRowIndex, firstRowOffset)
       scrollY = scrollState.position
       firstRowIndex = scrollState.index
       firstRowOffset = scrollState.offset
     } else if (oldState) {
       if (props.getRowHeight !== oldState.getRowHeight) {
-        this.scrollHelper.setRowHeightGetter(props.getRowHeight)
+        this.verticalScrollHelper.setRowHeightGetter(props.getRowHeight)
       }
       if (props.getSubRowHeight !== oldState.getSubRowHeight) {
-        this.scrollHelper.setSubRowHeightGetter(props.getSubRowHeight)
+        this.verticalScrollHelper.setSubRowHeightGetter(props.getSubRowHeight)
       }
     }
 
+    // scrollToRow
     const oldScrollToRow = oldState ? oldState.scrollToRow : undefined
     if (props.scrollToRow !== undefined && (
       props.scrollToRow !== oldScrollToRow ||
       viewportHeight !== oldViewportHeight
     )) {
-      const scrollState = this.scrollHelper.scrollRowIntoView(props.scrollToRow)
+      const scrollState = this.verticalScrollHelper.scrollRowIntoView(props.scrollToRow)
       scrollY = scrollState.position
       firstRowIndex = scrollState.index
       firstRowOffset = scrollState.offset
     }
 
+    // scrollTop
     const oldScrollTop = oldState ? oldState.scrollTop : undefined
     if (props.scrollTop !== undefined && props.scrollTop !== oldScrollTop) {
-      const scrollState = this.scrollHelper.scrollTo(props.scrollTop)
+      const scrollState = this.verticalScrollHelper.scrollTo(props.scrollTop)
       scrollY = scrollState.position
       firstRowIndex = scrollState.index
       firstRowOffset = scrollState.offset
     }
-
-    const oldScrollToColumn = oldState ? oldState.scrollToColumn : undefined
-    const scrollToColumn = props.scrollToColumn
-    if (scrollToColumn !== undefined && scrollToColumn !== oldScrollToColumn) {
-      const leftFixedCount = columnData.leftFixedLeafColumns.length
-      const scrollableCount = columnData.scrollableLeafColumns.length
-
-      // if selected column is a fixed column, don't scroll
-      if (scrollToColumn >= leftFixedCount && scrollToColumn < leftFixedCount + scrollableCount) {
-        const targetColumnIndex = Math.min(scrollToColumn - leftFixedCount, scrollableCount - 1)
-
-        // sum width for all columns before column
-        let previousColumnsWidth = 0
-        for (let i = 0; i < targetColumnIndex; i += 1) {
-          previousColumnsWidth += columnData.scrollableLeafColumns[i].width
-        }
-
-        // width of scrollable columns in viewport
-        const availableScrollWidth = adjustedWidth
-          - columnData.leftFixedColumnsWidth
-          - columnData.rightFixedColumnsWidth
-
-        // width of specified column
-        const targetColumnWidth = columnData.scrollableLeafColumns[targetColumnIndex].width
-
-        // must scroll at least far enough for end of column (prevColWidth + selColWidth)
-        // to be in viewport (availableScrollWidth = viewport width)
-        const minScrollPosition =
-          previousColumnsWidth + targetColumnWidth - availableScrollWidth
-
-        scrollX = clamp(scrollX, minScrollPosition, previousColumnsWidth)
-      }
-    }
-
 
     // size for content
     const contentWidth = getColumnsWidth(columnData.columns)
-    const contentHeight = this.scrollHelper.getContentHeight()
+    const contentHeight = this.verticalScrollHelper.getContentHeight()
     const showScrollbarX = contentWidth > viewportWidth
     const showScrollbarY = contentHeight > viewportHeight
     const reservedHeight = props.footerHeight
       + headerHeight
-      + 2 * borderSize
+      + reservedBorderSize
       + (showScrollbarX ? Scrollbar.SIZE : 0)
     const requiredHeight = contentHeight + reservedHeight
+    const reservedColumnWidth = columnData.leftFixedColumnsWidth + columnData.rightFixedColumnsWidth
 
-    const useMaxHeight = props.height === undefined
-    let height = Math.round(useMaxHeight ? props.maxHeight : props.height)
+    let height = Math.round(realUseHeight)
     if (useMaxHeight && !showScrollbarY) {
       height = requiredHeight
     }
 
     // body's size excludes scrollbars
-    const bodyWidth = (props.bordered ? props.width - 2 * borderSize : props.width) -
-      (showScrollbarY ? Scrollbar.SIZE : 0)
+    const bodyWidth = viewportWidth - (showScrollbarY ? Scrollbar.SIZE : 0)
     const bodyHeight = height - reservedHeight
 
     const maxScrollX = Math.max(0, contentWidth - bodyWidth)
@@ -661,27 +699,73 @@ export default class FlexiGrid extends React.Component {
     scrollX = Math.min(scrollX, maxScrollX)
     scrollY = Math.min(scrollY, maxScrollY)
 
-    this.scrollHelper.setViewportHeight(bodyHeight)
+    this.verticalScrollHelper.setViewportHeight(bodyHeight)
 
-    let scrollTop = Math.abs(firstRowOffset - this.scrollHelper.getRowPosition(firstRowIndex))
-    // This case can happen when the user is completely scrolled down and resizes
-    // the viewport to be taller vertically.
-    // This is because we set the viewport height after having calculated the rows
-    if (scrollTop !== scrollY) {
-      scrollTop = maxScrollY
-      const scrollState = this.scrollHelper.scrollTo(scrollTop)
-      firstRowIndex = scrollState.index
-      firstRowOffset = scrollState.offset
-      scrollY = scrollState.position
+    const getScrollableColumnWidth = index => columnData.scrollableLeafColumns[index].width
+    const scrollableViewportWidth = bodyWidth - reservedColumnWidth
+    if (!this.horizontalScrollHelper) {
+      this.horizontalScrollHelper = new HorizontalScrollHelper(
+        columnData.scrollableLeafColumns.length,
+        scrollableViewportWidth,
+        getScrollableColumnWidth,
+      )
+    } else {
+      this.horizontalScrollHelper.setViewportWidth(scrollableViewportWidth)
+      this.horizontalScrollHelper.setColumnWidthGetter(getScrollableColumnWidth)
     }
 
+    // scrollToColumn
+    const oldScrollToColumn = oldState ? oldState.scrollToColumn : undefined
+    const scrollToColumn = props.scrollToColumn
+    if (scrollToColumn !== undefined && scrollToColumn !== oldScrollToColumn) {
+      const leftFixedCount = columnData.leftFixedLeafColumns.length
+      const scrollableCount = columnData.scrollableLeafColumns.length
+      const columnIndex = clamp(scrollToColumn - leftFixedCount, 0, scrollableCount - 1)
+      const scrollState = this.horizontalScrollHelper.scrollToColumn(columnIndex)
+      scrollX = scrollState.position
+      firstColumnIndex = scrollState.index
+      firstColumnOffset = scrollState.offset
+    }
+
+    // scrollLeft
+    const oldScrollLeft = oldState ? oldState.scrollLeft : undefined
+    if (props.scrollLeft !== undefined && props.scrollLeft !== oldScrollLeft) {
+      const scrollState = this.horizontalScrollHelper.scrollTo(props.scrollLeft)
+      scrollX = scrollState.position
+      firstColumnIndex = scrollState.index
+      firstColumnOffset = scrollState.offset
+    }
+
+    if (
+      !this.columnBuffer ||
+      !oldState ||
+      !deepEqual(columnData.scrollableColumns, oldState.scrollableColumns)
+    ) {
+      this.columnBuffer = new FlexiGridColumnBuffer(
+        columnData.scrollableLeafColumns.length,
+        scrollableViewportWidth,
+        getScrollableColumnWidth,
+        props.bufferColumnCount,
+      )
+    }
+
+    const scrollableColumnsToRender = this.columnBuffer.getColumns(
+      firstColumnIndex,
+      firstColumnOffset,
+    )
 
     // The order of elements in this object metters and bringing bodyHeight,
     // height or useGroupHeader to the top can break various features
     const newState = {
+      rowCount,
+
       columnData,
+      scrollableColumnsToRender,
+      columnResizingKey: oldState && oldState.columnResizingKey || null,
+      columnReorderingKey: oldState && oldState.columnReorderingKey || null,
 
       height,
+      rowHeight,
       useMaxHeight,
       headerHeight,
       reservedHeight,
@@ -697,12 +781,22 @@ export default class FlexiGrid extends React.Component {
 
       firstRowIndex,
       firstRowOffset,
+      firstColumnIndex,
+      firstColumnOffset,
       scrollX,
       scrollY,
       maxScrollX,
       maxScrollY,
       showScrollbarX,
       showScrollbarY,
+
+      // store these props for next compare
+      scrollTop: props.scrollTop,
+      scrollLeft: props.scrollLeft,
+      scrollToRow: props.scrollToRow,
+      scrollToColumn: props.scrollToColumn,
+      getRowHeight: props.getRowHeight,
+      getSubRowHeight: props.getSubRowHeight,
     }
 
     return newState
@@ -796,15 +890,21 @@ export default class FlexiGrid extends React.Component {
       scrollX,
       showScrollbarX,
       showScrollbarY,
+      scrollableColumnsToRender,
+      scrollableLeafColumnsToRender,
       leftFixedColumnsUpdated,
       scrollableColumnsUpdated,
       rightFixedColumnsUpdated,
+      scrollableColumnsToRenderUpdated,
     } = this.state
 
     const {
       leftFixedColumns,
       scrollableColumns,
       rightFixedColumns,
+      leftFixedLeafColumns,
+      scrollableLeafColumns,
+      rightFixedLeafColumns,
       leftFixedColumnsWidth,
       scrollableColumnsWidth,
       rightFixedColumnsWidth,
@@ -821,12 +921,18 @@ export default class FlexiGrid extends React.Component {
       leftFixedColumns,
       scrollableColumns,
       rightFixedColumns,
+      leftFixedLeafColumns,
+      scrollableLeafColumns,
+      rightFixedLeafColumns,
+      scrollableColumnsToRender,
+      scrollableLeafColumnsToRender,
       leftFixedColumnsWidth,
       scrollableColumnsWidth,
       rightFixedColumnsWidth,
       leftFixedColumnsUpdated,
       scrollableColumnsUpdated,
       rightFixedColumnsUpdated,
+      scrollableColumnsToRenderUpdated,
     }
   }
 
@@ -842,17 +948,8 @@ export default class FlexiGrid extends React.Component {
   }
 
   renderBody() {
-    const {
-      leftFixedLeafColumns,
-      scrollableLeafColumns,
-      rightFixedLeafColumns,
-    } = this.state.columnData
-
     const props = {
       ...this.getHeaderAndBodyCommonProps(),
-      leftFixedLeafColumns,
-      scrollableLeafColumns,
-      rightFixedLeafColumns,
 
       width: this.state.bodyWidth,
       height: this.state.bodyHeight,
@@ -864,7 +961,7 @@ export default class FlexiGrid extends React.Component {
       scrolling: this.scrolling,
       subRow: this.props.subRow,
       bufferRowCount: this.props.bufferRowCount,
-      getRowPosition: this.scrollHelper.getRowPosition,
+      getRowPosition: this.verticalScrollHelper.getRowPosition,
       getRowHeight: this.props.getRowHeight,
       getSubRowHeight: this.props.getSubRowHeight,
       getRowClassName: this.props.getRowClassName,
@@ -1038,7 +1135,7 @@ export default class FlexiGrid extends React.Component {
           orientation={'horizontal'}
           prefixCls={props.prefixCls}
           position={state.scrollX}
-          size={state.bodyWidth + (state.showScrollbarY ? 1 : 0)}
+          size={state.bodyWidth}
           contentSize={state.contentWidth}
           hasVerticalScrollbar={state.showScrollbarX}
           onScroll={this.onHorizontalScroll}

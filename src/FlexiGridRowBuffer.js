@@ -23,31 +23,31 @@ export default class FlexiGridRowBuffer {
     this.bufferRowCount = bufferRowCount > 0
       ? bufferRowCount
       : clamp(Math.floor(this.maxVisibleRowCount / 2), MIN_BUFFER_ROWS, MAX_BUFFER_ROWS)
-    this.viewportRowsBegin = 0
-    this.viewportRowsEnd = 0
+    this.satrtRowIndex = 0
+    this.endRowIndex = 0
     this.rows = []
   }
 
   getRowsWithUpdatedBuffer() {
     let remainingBufferRows = 2 * this.bufferRowCount
-    let bufferRowIndex = Math.max(this.viewportRowsBegin - this.bufferRowCount, 0)
+    let bufferRowIndex = Math.max(this.satrtRowIndex - this.bufferRowCount, 0)
 
-    while (bufferRowIndex < this.viewportRowsBegin) {
+    while (bufferRowIndex < this.satrtRowIndex) {
       this.addRowToBuffer(
         bufferRowIndex,
-        this.viewportRowsBegin,
-        this.viewportRowsEnd - 1,
+        this.satrtRowIndex,
+        this.endRowIndex - 1,
       )
       bufferRowIndex += 1
       remainingBufferRows -= 1
     }
 
-    bufferRowIndex = this.viewportRowsEnd
+    bufferRowIndex = this.endRowIndex
     while (bufferRowIndex < this.rowCount && remainingBufferRows > 0) {
       this.addRowToBuffer(
         bufferRowIndex,
-        this.viewportRowsBegin,
-        this.viewportRowsEnd - 1,
+        this.satrtRowIndex,
+        this.endRowIndex - 1,
       )
       bufferRowIndex += 1
       remainingBufferRows -= 1
@@ -57,36 +57,39 @@ export default class FlexiGridRowBuffer {
   }
 
   getRows(firstRowIndex, firstRowOffset) {
+    // get row indexs will be render
     let rowIndex = firstRowIndex
     let totalHeight = firstRowOffset
     const endIndex = Math.min(firstRowIndex + this.maxVisibleRowCount, this.rowCount)
 
-    this.viewportRowsBegin = firstRowIndex
+    this.satrtRowIndex = firstRowIndex
 
-    while (rowIndex < endIndex ||
-      (totalHeight < this.viewportHeight && rowIndex < this.rowCount)) {
+    while (rowIndex < endIndex || (totalHeight < this.viewportHeight && rowIndex < this.rowCount)) {
       this.addRowToBuffer(rowIndex, firstRowIndex, endIndex - 1)
       totalHeight += this.rowHeightGetter(rowIndex)
       rowIndex += 1
-      // Store index after the last viewport row as end, to be able to
-      // distinguish when there are no rows rendered in viewport
-      this.viewportRowsEnd = rowIndex
     }
+
+    // Store index after the last viewport row as end, to be able to
+    // distinguish when there are no rows rendered in viewport
+    this.endRowIndex = rowIndex
 
     return this.rows
   }
 
-  addRowToBuffer(rowIndex, firstViewportRowIndex, lastViewportRowIndex) {
+  addRowToBuffer(rowIndex, startRowIndex, endRowIndex) {
     let rowPosition = this.bufferSet.getPositionForValue(rowIndex)
-    const viewportRowCount = lastViewportRowIndex - firstViewportRowIndex + 1
+    const viewportRowCount = endRowIndex - startRowIndex + 1
     const allowedRowCount = viewportRowCount + this.bufferRowCount * 2
+
     if (rowPosition === null && this.bufferSet.getSize() >= allowedRowCount) {
       rowPosition = this.bufferSet.replaceFurthestValuePosition(
-        firstViewportRowIndex,
-        lastViewportRowIndex,
+        startRowIndex,
+        endRowIndex,
         rowIndex,
       )
     }
+
     if (rowPosition === null) {
       // Can't reuse any of existing positions for this row.
       // So we have to create new position.

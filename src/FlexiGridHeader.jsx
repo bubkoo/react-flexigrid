@@ -15,12 +15,18 @@ export default class FlexiGridHeader extends React.Component {
     leftFixedColumns: propTypes.columns,
     scrollableColumns: propTypes.columns,
     rightFixedColumns: propTypes.columns,
+    leftFixedLeafColumns: propTypes.columns,
+    scrollableLeafColumns: propTypes.columns,
+    rightFixedLeafColumns: propTypes.columns,
+    scrollableColumnsToRender: propTypes.columns,
+    scrollableLeafColumnsToRender: propTypes.columns,
     leftFixedColumnsWidth: PropTypes.number,
     scrollableColumnsWidth: PropTypes.number,
     rightFixedColumnsWidth: PropTypes.number,
     leftFixedColumnsUpdated: PropTypes.bool,
     scrollableColumnsUpdated: PropTypes.bool,
     rightFixedColumnsUpdated: PropTypes.bool,
+    scrollableColumnsToRenderUpdated: PropTypes.bool,
 
 
     width: PropTypes.number,

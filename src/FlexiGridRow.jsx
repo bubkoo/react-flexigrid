@@ -30,12 +30,15 @@ export default class FlexiGridRow extends React.Component {
     leftFixedLeafColumns: propTypes.columns,
     scrollableLeafColumns: propTypes.columns,
     rightFixedLeafColumns: propTypes.columns,
+    scrollableColumnsToRender: propTypes.columns,
+    scrollableLeafColumnsToRender: propTypes.columns,
     leftFixedColumnsWidth: PropTypes.number,
     scrollableColumnsWidth: PropTypes.number,
     rightFixedColumnsWidth: PropTypes.number,
     leftFixedColumnsUpdated: PropTypes.bool,
     scrollableColumnsUpdated: PropTypes.bool,
     rightFixedColumnsUpdated: PropTypes.bool,
+    scrollableColumnsToRenderUpdated: PropTypes.bool,
 
     onRowTouchStart: PropTypes.func,
     onRowTouchEnd: PropTypes.func,
@@ -105,12 +108,16 @@ export default class FlexiGridRow extends React.Component {
       bordered,
       scrollX,
       showScrollbarX,
+      getColumnPosition,
       scrollableColumns,
       rightFixedColumns,
       scrollableLeafColumns,
+      scrollableColumnsToRender,
+      scrollableLeafColumnsToRender,
       leftFixedColumnsWidth,
       scrollableColumnsWidth,
       scrollableColumnsUpdated,
+      scrollableColumnsToRenderUpdated,
     } = this.props
 
     const props = {
@@ -124,9 +131,13 @@ export default class FlexiGridRow extends React.Component {
       isHeader,
       scrollX,
       left: leftFixedColumnsWidth,
+      getColumnPosition,
       columns: scrollableColumns,
       leafColumns: scrollableLeafColumns,
       columnsUpdated: scrollableColumnsUpdated,
+      columnsToRender: scrollableColumnsToRender,
+      leafColumnsToRender: scrollableLeafColumnsToRender,
+      columnsToRenderUpdated: scrollableColumnsToRenderUpdated,
       fixLastColumn: bordered && showScrollbarX && rightFixedColumns.length === 0,
     }
 

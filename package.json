@@ -1,6 +1,6 @@
 {
   "name": "react-flexigrid",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A React table component designed to allow presenting millions of rows of data.",
   "main": "./lib/index.js",
   "keywords": [
@@ -39,6 +39,7 @@
     "lodash.debounce": "^4.0.8",
     "lodash.flatten": "^4.4.0",
     "lodash.get": "^4.4.2",
+    "lodash.isequal": "^4.5.0",
     "lodash.isfunction": "^3.0.8",
     "object-assign": "^4.1.1",
     "prop-types": "^15.5.10",

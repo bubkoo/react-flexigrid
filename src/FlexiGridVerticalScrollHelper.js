@@ -10,7 +10,7 @@ const NO_ROWS_SCROLL_RESULT = {
 }
 
 
-export default class FlexiGridScrollHelper {
+export default class FlexiGridVerticalScrollHelper {
   constructor(
     rowCount: Number,
     defaultRowHeight: Number,
@@ -73,7 +73,8 @@ export default class FlexiGridScrollHelper {
 
   updateHeightsAboveViewport(firstRowIndex: Number) {
     let index = firstRowIndex - 1
-    while (index >= 0 && index >= firstRowIndex - BUFFER_ROWS) {
+    const endRowIndex = firstRowIndex - BUFFER_ROWS
+    while (index >= 0 && index >= endRowIndex) {
       const delta = this.updateRowHeight(index)
       this.position += delta
       index -= 1
@@ -85,9 +86,10 @@ export default class FlexiGridScrollHelper {
       return 0
     }
 
+    const oldHeight = this.cachedHeights[rowIndex]
     const newHeight = this.fullRowHeightGetter(rowIndex)
-    if (newHeight !== this.cachedHeights[rowIndex]) {
-      const delta = newHeight - this.cachedHeights[rowIndex]
+    if (newHeight !== oldHeight) {
+      const delta = newHeight - oldHeight
       this.rowOffsets.set(rowIndex, newHeight)
       this.cachedHeights[rowIndex] = newHeight
       this.contentHeight += delta
@@ -105,15 +107,17 @@ export default class FlexiGridScrollHelper {
   getRowAtEndPosition(rowIndex: Number) {
     // We need to update enough rows above the selected one to be sure that when
     // we scroll to selected position all rows between first shown and selected
-    // one have most recent heights computed and will not resize
+    // one have most recent heights computed and will not resize.
+
+    // 获取 rowIndex 为可视范围的最后一行时的 position
     this.updateRowHeight(rowIndex)
     let currentRowIndex = rowIndex
-    let top = this.cachedHeights[currentRowIndex]
-    while (top < this.viewportHeight && currentRowIndex >= 0) {
+    let sum = this.cachedHeights[currentRowIndex]
+    while (sum < this.viewportHeight && currentRowIndex >= 0) {
       currentRowIndex -= 1
       if (currentRowIndex >= 0) {
         this.updateRowHeight(currentRowIndex)
-        top += this.cachedHeights[currentRowIndex]
+        sum += this.cachedHeights[currentRowIndex]
       }
     }
 

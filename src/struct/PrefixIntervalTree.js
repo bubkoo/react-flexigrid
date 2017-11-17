@@ -43,7 +43,6 @@ export default class PrefixIntervalTree {
      * the index of the first element in the heap. Always a power of 2.
      */
     this.half = ceilLog2(this.size)
-
     this.heap = new Int32Array(2 * this.half)
 
     // 初始化数组

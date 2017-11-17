@@ -11,6 +11,8 @@ export function shouldUpdateHeader(oldProps, nextProps) {
     leftFixedColumnsWidth: g,
     scrollableColumnsWidth: h,
     rightFixedColumnsWidth: i,
+    scrollableColumnsToRender: j,
+    scrollableLeafColumnsToRender: k,
     ...oldOtherProps
   } = oldProps
 
@@ -24,6 +26,8 @@ export function shouldUpdateHeader(oldProps, nextProps) {
     leftFixedColumnsWidth,
     scrollableColumnsWidth,
     rightFixedColumnsWidth,
+    scrollableColumnsToRender,
+    scrollableLeafColumnsToRender,
     ...nextOtherProps
   } = nextProps
 
@@ -39,8 +43,21 @@ export function shouldUpdateRow(oldProps, nextProps) {
 }
 
 export function shouldUpdateCellGroup(oldProps, nextProps) {
-  const { columns: a, leafColumns: b, ...oldOtherProps } = oldProps
-  const { columns, leafColumns, ...nextOtherProps } = nextProps
+  const {
+    columns: a,
+    leafColumns: b,
+    columnsToRender: c,
+    leafColumnsToRender: d,
+    ...oldOtherProps
+  } = oldProps
+
+  const {
+    columns,
+    leafColumns,
+    columnsToRender,
+    leafColumnsToRender,
+    ...nextOtherProps
+  } = nextProps
 
   return !shallowEqual(oldOtherProps, nextOtherProps)
 }

@@ -4,7 +4,7 @@ import propTypes from './struct/propTypes'
 import FlexiGridRow from './FlexiGridRow'
 import FlexiGridRowBuffer from './FlexiGridRowBuffer'
 
-export default class FlexiGridBufferedRows extends React.Component {
+export default class FlexiGridBufferedColumns extends React.Component {
   static PROPTYPES_DISABLED_FOR_PERFORMANCE = {
     // inherit from body
     prefixCls: PropTypes.string,
@@ -157,7 +157,8 @@ export default class FlexiGridBufferedRows extends React.Component {
       rowPositions[rowIndex] = getRowPosition(rowIndex)
     })
 
-    const renderredRows = sortedRows.map((rowIndex) => {
+
+    const staticRowArray = rowsToRender.map((rowIndex) => {
       const currentRowHeight = this.getRowHeight(rowIndex)
       // const currentSubRowHeight = this.getSubRowHeight(rowIndex)
       const rowOffsetTop = baseOffsetTop + rowPositions[rowIndex]
@@ -171,10 +172,9 @@ export default class FlexiGridBufferedRows extends React.Component {
         height: currentRowHeight,
         offsetTop: Math.round(rowOffsetTop),
       }
-
       return <FlexiGridRow key={`body-row-${record[rowKey]}`} {...rowProps} />
     })
 
-    return (<div>{renderredRows}</div>)
+    return (<div>{staticRowArray}</div>)
   }
 }

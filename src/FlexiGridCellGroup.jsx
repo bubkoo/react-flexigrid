@@ -23,7 +23,10 @@ export default class FlexiGridCellGroup extends React.Component {
     rowHeight: PropTypes.number,
     columns: propTypes.columns,
     leafColumns: propTypes.columns,
+    columnsToRender: propTypes.columns,
+    leafColumnsToRender: propTypes.columns,
     columnsUpdated: PropTypes.bool,
+    columnsToRenderUpdated: PropTypes.bool,
     fixLastColumn: PropTypes.bool,
   }
 
@@ -40,16 +43,24 @@ export default class FlexiGridCellGroup extends React.Component {
   }
 
   renderBodyCells() {
-    const { prefixCls, height, leafColumns, record, fixLastColumn } = this.props
+    const {
+      prefixCls,
+      height,
+      leafColumns,
+      leafColumnsToRender,
+      record,
+      fixLastColumn,
+    } = this.props
+
     let left = 0
 
-    return leafColumns.map((column) => {
-      const { width, key, dataIndex, render, rowIndex, isLastLeaf } = column
+    return (leafColumnsToRender || leafColumns).map((column) => {
+      const { width, key, dataIndex, render, rowIndex, offsetLeft, isLastLeaf } = column
       const cellProps = {
         prefixCls,
         width,
         height,
-        left,
+        left: offsetLeft !== undefined ? offsetLeft : left,
         record,
         dataIndex,
         rowIndex,
