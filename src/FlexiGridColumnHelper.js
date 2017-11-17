@@ -128,7 +128,7 @@ function sortColumns(columns: Array, orderMap = {}): Array {
     const result = []
 
     columns.forEach((column) => {
-      const index = keys.indexOf(column.key)
+      const index = keys.indexOf(`${column.key}`)
       if (index >= 0) {
         cache[orders[index]] = column
         result.push(null)
