@@ -33,8 +33,11 @@ export default class FlexiGridCell extends React.Component {
       if (React.isValidElement(render)) {
         content = React.cloneElement(render, {
           record,
+          content,
           dataIndex,
           rowIndex,
+          height,
+          width,
         })
       } else if (typeof render === 'function') {
         content = render(content, record, rowIndex)
