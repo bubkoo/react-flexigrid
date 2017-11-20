@@ -1,6 +1,6 @@
 {
   "name": "react-flexigrid",
-  "version": "0.0.4",
+  "version": "0.0.7",
   "description": "A React table component designed to allow presenting millions of rows of data.",
   "main": "./lib/index.js",
   "keywords": [

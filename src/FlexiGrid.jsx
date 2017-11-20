@@ -595,7 +595,8 @@ export default class FlexiGrid extends React.Component {
     const columnData = parseColumns(props.columns, cachedColumnData)
     const rowCount = props.data.length
     const rowHeight = props.rowHeight
-    const reservedBorderSize = props.bordered ? 2 * props.borderSize : 0
+    const borderSize = props.bordered ? props.borderSize : 0
+    const reservedBorderSize = props.bordered ? 2 * borderSize : 0
     const headerHeight = columnData.depth * rowHeight
     const useMaxHeight = props.height === undefined
     const realUseHeight = useMaxHeight ? props.maxHeight : props.height
@@ -677,7 +678,7 @@ export default class FlexiGrid extends React.Component {
     // size for content
     const contentWidth = getColumnsWidth(columnData.columns)
     const contentHeight = this.verticalScrollHelper.getContentHeight()
-    const showScrollbarX = contentWidth > viewportWidth
+    const showScrollbarX = contentWidth > viewportWidth + borderSize
     const showScrollbarY = contentHeight > viewportHeight
     const reservedHeight = props.footerHeight
       + headerHeight
