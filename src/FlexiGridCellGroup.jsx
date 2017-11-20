@@ -49,13 +49,14 @@ export default class FlexiGridCellGroup extends React.Component {
       leafColumns,
       leafColumnsToRender,
       record,
+      rowIndex,
       fixLastColumn,
     } = this.props
 
     let left = 0
 
     return (leafColumnsToRender || leafColumns).map((column) => {
-      const { width, key, dataIndex, render, rowIndex, offsetLeft, isLastLeaf } = column
+      const { width, key, dataIndex, render, offsetLeft, isLastLeaf } = column
       const cellProps = {
         prefixCls,
         width,
