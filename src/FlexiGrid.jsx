@@ -44,7 +44,8 @@ export default class FlexiGrid extends React.Component {
     maxHeight: PropTypes.number,
     ownerHeight: PropTypes.number,
     footerHeight: PropTypes.number,
-    rowHeight: PropTypes.number.isRequired,
+    rowHeight: PropTypes.number,
+    headerRowHeight: PropTypes.number,
     subRowHeight: PropTypes.number,
 
     getRowHeight: PropTypes.func,
@@ -100,6 +101,7 @@ export default class FlexiGrid extends React.Component {
   static defaultProps = {
     prefixCls: 'flexi-grid',
     rowHeight: 32,
+    headerRowHeight: 32,
     subRowHeight: 0,
     footerHeight: 0,
     bordered: true,
@@ -595,9 +597,10 @@ export default class FlexiGrid extends React.Component {
     const columnData = parseColumns(props.columns, cachedColumnData)
     const rowCount = props.data.length
     const rowHeight = props.rowHeight
+    const headerRowHeight = props.headerRowHeight
     const borderSize = props.bordered ? props.borderSize : 0
     const reservedBorderSize = props.bordered ? 2 * borderSize : 0
-    const headerHeight = columnData.depth * rowHeight
+    const headerHeight = columnData.depth * headerRowHeight
     const useMaxHeight = props.height === undefined
     const realUseHeight = useMaxHeight ? props.maxHeight : props.height
 
@@ -942,6 +945,7 @@ export default class FlexiGrid extends React.Component {
     const { viewportWidth, headerHeight } = this.state
     const props = {
       ...this.getHeaderAndBodyCommonProps(),
+      rowHeight: this.props.headerRowHeight,
       scrollbarSize: Scrollbar.SIZE,
       width: viewportWidth,
       height: headerHeight,
