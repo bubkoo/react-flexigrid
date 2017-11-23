@@ -9,3 +9,4 @@ dist
 /.prerender
 /lib
 /test/coverage
+/assets/*.css
