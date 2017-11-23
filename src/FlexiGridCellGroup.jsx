@@ -56,7 +56,7 @@ export default class FlexiGridCellGroup extends React.Component {
     let left = 0
 
     return (leafColumnsToRender || leafColumns).map((column) => {
-      const { width, key, dataIndex, render, offsetLeft, isLastLeaf } = column
+      const { width, key, dataIndex, render, align, offsetLeft, isLastLeaf } = column
       const cellProps = {
         prefixCls,
         width,
@@ -65,6 +65,7 @@ export default class FlexiGridCellGroup extends React.Component {
         record,
         dataIndex,
         rowIndex,
+        align,
         render,
       }
 
@@ -132,7 +133,7 @@ export default class FlexiGridCellGroup extends React.Component {
     let left = 0
 
     return columns.map((column) => {
-      const { children, width, title, key, isLastLeaf } = column
+      const { children, width, title, key, isLastLeaf, align } = column
       let ret
 
       if (children && children.length) {
@@ -144,6 +145,7 @@ export default class FlexiGridCellGroup extends React.Component {
           height,
           left,
           key,
+          align,
           render: title,
           className: {
             unreorderable: column.reorderable === false,
