@@ -1,11 +1,17 @@
 {
   "presets": [
-    "es2015",
+    [
+      "env",
+      {
+        "modules": false,
+        "loose": true,
+        "useBuiltIns": true
+      }
+    ],
     "react",
     "stage-0"
   ],
   "plugins": [
-    "add-module-exports",
     "transform-runtime"
   ],
   "env": {
