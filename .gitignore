@@ -5,5 +5,7 @@
 npm-debug.log
 node_modules
 dist
+/.site
+/.prerender
 /lib
 /test/coverage
