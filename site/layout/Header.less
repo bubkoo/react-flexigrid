@@ -1,0 +1,54 @@
+.header {
+  background: #435052;
+  position: fixed;
+  width: 100%;
+  z-index: 1;
+  top: 0;
+  height: 50px;
+
+  .inner {
+    margin: 0 auto;
+    position: relative;
+    padding: 12px 36px;
+    text-align: right;
+
+    a {
+      color: #fff;
+      margin-right: 1em;
+      text-decoration: none;
+      text-shadow: 0 1px rgba(0, 0, 0, 0.15);
+
+      &::last-child {
+        margin-right: 0;
+      }
+
+      &.logo {
+        float: left;
+        height: 24px;
+        line-height: 24px;
+
+        svg {
+          float: left;
+          width: 24px;
+          height: 24px;
+          fill: #fff;
+          margin-right: 8px;
+        }
+      }
+
+      &.home {
+        display: none;
+      }
+    }
+
+    @media only screen and (max-width: 680px) {
+      a.home {
+        display: inline;
+      }
+
+      a.logo {
+        display: none;
+      }
+    }
+  }
+}
