@@ -5,7 +5,12 @@ export default {
     PropTypes.string,
     PropTypes.object,
   ]),
-  data: PropTypes.array,
+  data: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.shape({
+      length: PropTypes.number.isRequired,
+    }),
+  ]),
   record: PropTypes.oneOfType([
     PropTypes.array,
     PropTypes.object,
