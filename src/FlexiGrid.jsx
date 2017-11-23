@@ -82,7 +82,7 @@ export default class FlexiGrid extends React.Component {
     onRowMouseEnter: PropTypes.func,
     onRowMouseLeave: PropTypes.func,
 
-    resizeable: PropTypes.bool,
+    resizable: PropTypes.bool,
     resizeKnobSize: PropTypes.number,
     onColumnResize: PropTypes.func,
     onColumnResizing: PropTypes.func,
@@ -111,7 +111,7 @@ export default class FlexiGrid extends React.Component {
     touchScrollEnabled: false,
     stopScrollPropagation: false,
 
-    resizeable: false,
+    resizable: false,
     resizeKnobSize: 13,
 
     reorderable: false,
@@ -1189,9 +1189,9 @@ export default class FlexiGrid extends React.Component {
           {this.renderShadowRight()}
           {this.renderShadowBottom()}
           {this.renderShadowLeft()}
-          {this.props.resizeable && this.renderResizeKnobs()}
+          {this.props.resizable && this.renderResizeKnobs()}
           {this.props.reorderable && this.renderReorderKnobs()}
-          {this.props.resizeable && this.renderColumnResizeHandler()}
+          {this.props.resizable && this.renderColumnResizeHandler()}
           {this.props.reorderable && this.renderColumnReorderHandler()}
         </div>
         {verticalScrollbar}

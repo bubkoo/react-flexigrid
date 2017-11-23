@@ -27,7 +27,7 @@ export default class FlexiGridColumnResizeKnobs extends React.Component {
   }
 
   renderResizeKnob(column, leftColumnsWidth, scrollable, isRightFixed) {
-    if (column.resizeable === false) {
+    if (column.resizable === false) {
       return null
     }
 
