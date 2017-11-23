@@ -27,20 +27,14 @@ export default class FlexiGridCell extends React.Component {
 
   renderContent() {
     const { prefixCls, height, width, dataIndex, rowIndex, record, render } = this.props
-
     let content = record && record[dataIndex]
+    const params = { height, width, dataIndex, rowIndex, record, content }
+
     if (render) {
       if (React.isValidElement(render)) {
-        content = React.cloneElement(render, {
-          record,
-          content,
-          dataIndex,
-          rowIndex,
-          height,
-          width,
-        })
+        content = React.cloneElement(render, params)
       } else if (typeof render === 'function') {
-        content = render(content, record, rowIndex)
+        content = render(params)
       } else {
         content = render
       }
