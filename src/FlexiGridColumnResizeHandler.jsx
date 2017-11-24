@@ -11,6 +11,8 @@ import {
   requestAnimationFrame,
 } from './utils'
 
+const miniColumnWidth = 4
+
 export default class FlexiGridColumnResizeHandler extends React.Component {
   static propTypes = {
     prefixCls: PropTypes.string,
@@ -38,7 +40,7 @@ export default class FlexiGridColumnResizeHandler extends React.Component {
     offsetLeft: 0,
     offsetTop: 0,
     initialWidth: 0,
-    minWidth: 0,
+    minWidth: miniColumnWidth,
     maxWidth: Number.MAX_SAFE_INTEGER,
     knobSize: 0,
     initialEvent: null,
@@ -95,7 +97,11 @@ export default class FlexiGridColumnResizeHandler extends React.Component {
     const state = this.cache || this.state
 
     const newWidth = state.cursorDelta + (rtl ? -deltaX : deltaX)
-    const newFixedWidth = clamp(newWidth, this.props.minWidth, this.props.maxWidth)
+    const newFixedWidth = clamp(
+      newWidth,
+      this.props.minWidth || miniColumnWidth,
+      this.props.maxWidth,
+    )
     const left = state.left - (this.props.rtl ? newFixedWidth - state.width : 0)
 
     this.cache = {
