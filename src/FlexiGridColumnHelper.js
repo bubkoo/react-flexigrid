@@ -1,5 +1,39 @@
+
 export function getColumnsWidth(columns: Array): Number {
   return columns.reduce((memo, column) => memo + column.width, 0)
+}
+
+function getContentWidth(columns: Array): Number {
+  return columns.reduce((memo, { children, width }) =>
+    memo + (
+      children && children.length
+        ? getContentWidth(children)
+        : width
+    ), 0)
+}
+
+function getFlexGrowCount(columns: Array): Number {
+  return columns.reduce((memo, { children, flexGrow }) =>
+    memo + (
+      children && children.length
+        ? getFlexGrowCount(children)
+        : flexGrow || 0
+    ), 0)
+}
+
+function getFlexColumns(columns: Array): Array {
+  const result = []
+
+  columns.forEach((column) => {
+    const { children, flexGrow } = column
+    if (children && children.length) {
+      result.push(...getFlexColumns(children))
+    } else if (flexGrow) {
+      result.push(column)
+    }
+  })
+
+  return result
 }
 
 function getColumnsFixed(columns: Array) {
@@ -39,6 +73,7 @@ function getRightFixedStartIndex(columns: Array): Number {
 
   return -1
 }
+
 
 function colneColumns(
   columns: Array,
@@ -166,8 +201,33 @@ export function parseColumns(
   {
     widthMap = {},
     orderMap = {},
+    viewportWidth,
   },
 ): Object {
+  const contentWidth = getContentWidth(columns)
+  const growCount = getFlexGrowCount(columns)
+  if (contentWidth < viewportWidth && growCount) {
+    const flexColumns = getFlexColumns(columns)
+    let unsignedWidth = viewportWidth - contentWidth
+    const factor = unsignedWidth / growCount
+    const flexColumnsCount = flexColumns.length
+
+    widthMap = { ...widthMap } // eslint-disable-line
+
+    flexColumns.forEach(({ key, dataIndex, flexGrow, width }, index) => {
+      const keey = key || dataIndex
+      const addWidth = index === flexColumnsCount - 1
+        ? unsignedWidth
+        : Math.round(factor * flexGrow)
+
+      unsignedWidth -= addWidth
+
+      if (!widthMap[keey]) {
+        widthMap[keey] = width + addWidth
+      }
+    })
+  }
+
   columns = colneColumns(columns, widthMap) // eslint-disable-line
 
   const leftFixedIndex = getLeftFixedEndIndex(columns)

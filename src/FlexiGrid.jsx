@@ -584,28 +584,31 @@ export default class FlexiGrid extends React.Component {
       'Either height or maxHeight should be specified',
     )
 
-    const cachedColumnData = {
+    const borderSize = props.bordered ? props.borderSize : 0
+    const reservedBorderSize = props.bordered ? 2 * borderSize : 0
+    // the width of viewport includes scrollbars
+    const viewportWidth = props.width - reservedBorderSize
+
+    const columnConfig = {
       widthMap: this.columnWidthMap || {},
       orderMap: this.columnOrderMap || {},
+      viewportWidth,
     }
 
     if (oldState) {
-      cachedColumnData.resizingKey = oldState.columnResizingKey
-      cachedColumnData.reorderingKey = oldState.columnReorderingKey
+      columnConfig.resizingKey = oldState.columnResizingKey
+      columnConfig.reorderingKey = oldState.columnReorderingKey
     }
 
-    const columnData = parseColumns(props.columns, cachedColumnData)
+    const columnData = parseColumns(props.columns, columnConfig)
     const rowCount = props.data.length
     const rowHeight = props.rowHeight
     const headerRowHeight = props.headerRowHeight
-    const borderSize = props.bordered ? props.borderSize : 0
-    const reservedBorderSize = props.bordered ? 2 * borderSize : 0
+
     const headerHeight = columnData.depth * headerRowHeight
     const useMaxHeight = props.height === undefined
     const realUseHeight = useMaxHeight ? props.maxHeight : props.height
-
-    // the size of viewport includes scrollbars
-    const viewportWidth = props.width - reservedBorderSize
+    // the height of viewport includes scrollbars
     const viewportHeight = realUseHeight
       - (headerHeight || 0)
       - (props.footerHeight || 0)
