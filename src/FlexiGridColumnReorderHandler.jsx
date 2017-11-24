@@ -17,7 +17,7 @@ export default class FlexiGridColumnReorderHandler extends React.Component {
     factor: PropTypes.number,
     width: PropTypes.number,
     height: PropTypes.number,
-    rowHeight: PropTypes.number,
+    headerRowHeight: PropTypes.number,
     columnHeight: PropTypes.number,
     offsetLeft: PropTypes.number,
     offsetTop: PropTypes.number,
@@ -33,7 +33,7 @@ export default class FlexiGridColumnReorderHandler extends React.Component {
     factor: 3 / 4,
     width: 0,
     height: 0,
-    rowHeight: 0,
+    headerRowHeight: 0,
     columnHeight: 0,
     offsetLeft: 0,
     offsetTop: 0,
@@ -243,12 +243,12 @@ export default class FlexiGridColumnReorderHandler extends React.Component {
   }
 
   renderHeaderMergedCells(height, left, column) {
-    const { prefixCls, rowHeight } = this.props
+    const { prefixCls, headerRowHeight } = this.props
     const { children, width, title, align, key } = column
     const cellProps = {
       prefixCls,
       width,
-      height: rowHeight,
+      height: headerRowHeight,
       left: 0,
       align: align || 'center',
       render: title,
@@ -266,12 +266,12 @@ export default class FlexiGridColumnReorderHandler extends React.Component {
           className={`${prefixCls}-header-merged-cells`}
           style={{
             width,
-            height: height - rowHeight,
-            top: rowHeight,
+            height: height - headerRowHeight,
+            top: headerRowHeight,
           }}
         >
           {
-            this.renderHeaderCells(children, height - rowHeight)
+            this.renderHeaderCells(children, height - headerRowHeight)
           }
         </div>
       </div>
@@ -330,15 +330,18 @@ export default class FlexiGridColumnReorderHandler extends React.Component {
   }
 
   renderDragKnobs(columns, height, offsetLeft, offsetTop) {
-    const { rowHeight } = this.props
+    const { headerRowHeight } = this.props
     const knobs = []
     let left = offsetLeft
 
     columns.forEach((column) => {
       if (column.children) {
         knobs.push(
-          this.renderDragKnob(column, rowHeight, left, offsetTop),
-          ...this.renderDragKnobs(column.children, height - rowHeight, left, offsetTop + rowHeight),
+          this.renderDragKnob(column, headerRowHeight, left, offsetTop),
+          ...this.renderDragKnobs(
+            column.children,
+            height - headerRowHeight, left, offsetTop + headerRowHeight,
+          ),
         )
       } else {
         knobs.push(this.renderDragKnob(column, height, left, offsetTop))

@@ -6,7 +6,7 @@ import { shallowEqual } from './utils'
 export default class FlexiGridColumnResizeKnobs extends React.Component {
   static propTypes = {
     prefixCls: PropTypes.string.isRequired,
-    rowHeight: PropTypes.number.isRequired,
+    headerRowHeight: PropTypes.number.isRequired,
     headerHeight: PropTypes.number.isRequired,
     bodyHeight: PropTypes.number.isRequired,
     bodyWidth: PropTypes.number.isRequired,
@@ -32,7 +32,7 @@ export default class FlexiGridColumnResizeKnobs extends React.Component {
     }
 
     const {
-      rowHeight,
+      headerRowHeight,
       headerHeight,
       bodyHeight,
       bodyWidth,
@@ -51,7 +51,7 @@ export default class FlexiGridColumnResizeKnobs extends React.Component {
     const left = offsetLeft - Math.ceil(knobSize / 2)
     const top = ((column.isFirstLeaf && isRightFixed) || column.isLastLeaf)
       ? 0
-      : rowHeight * (column.depth - 1)
+      : headerRowHeight * (column.depth - 1)
 
     const style = {
       top,

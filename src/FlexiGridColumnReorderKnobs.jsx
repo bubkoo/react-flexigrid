@@ -7,8 +7,8 @@ export default class FlexiGridColumnReorderKnobs extends React.Component {
   static propTypes = {
     prefixCls: PropTypes.string.isRequired,
     knobSize: PropTypes.number.isRequired,
-    rowHeight: PropTypes.number.isRequired,
     headerHeight: PropTypes.number.isRequired,
+    headerRowHeight: PropTypes.number.isRequired,
     bodyWidth: PropTypes.number.isRequired,
     scrollX: PropTypes.number.isRequired,
     showScrollbarX: PropTypes.bool.isRequired,
@@ -32,7 +32,7 @@ export default class FlexiGridColumnReorderKnobs extends React.Component {
 
     const {
       knobSize,
-      rowHeight,
+      headerRowHeight,
       headerHeight,
       bodyWidth,
       scrollX,
@@ -44,11 +44,11 @@ export default class FlexiGridColumnReorderKnobs extends React.Component {
 
 
     const hasChildren = column.children && column.children.length > 0
-    const top = rowHeight * (column.depth - 1)
+    const top = headerRowHeight * (column.depth - 1)
     const left = leftColumnsWidth - (scrollable ? scrollX : 0)
     const height = (
       hasChildren
-        ? rowHeight
+        ? headerRowHeight
         : headerHeight - top
     ) - 1
 

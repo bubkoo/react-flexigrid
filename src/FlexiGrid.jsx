@@ -811,12 +811,12 @@ export default class FlexiGrid extends React.Component {
     const raw = this.columnReorderingData
     if (raw) {
       const { column } = raw
-      const { prefixCls, rowHeight, borderSize, reorderFactor, reorderKnobSize } = this.props
+      const { prefixCls, headerRowHeight, borderSize, reorderFactor, reorderKnobSize } = this.props
       const { bodyWidth, headerHeight, bodyHeight, columnData, scrollX } = this.state
       const { leftFixedColumnsWidth, rightFixedColumnsWidth } = columnData
       const maxRight = bodyWidth - rightFixedColumnsWidth
 
-      const offsetTop = (column.depth - 1) * rowHeight
+      const offsetTop = (column.depth - 1) * headerRowHeight
 
       let offsetLeft = column.left
       if (this.state.showScrollbarX) {
@@ -860,7 +860,7 @@ export default class FlexiGrid extends React.Component {
         offsetLeft,
         offsetTop,
         targets,
-        rowHeight,
+        headerRowHeight,
         columnHeight: headerHeight - offsetTop,
         borderSize,
         scrollX,
@@ -1060,7 +1060,7 @@ export default class FlexiGrid extends React.Component {
     const props = {
       prefixCls: this.props.prefixCls,
       knobSize: this.props.resizeKnobSize,
-      rowHeight: this.props.rowHeight,
+      headerRowHeight: this.props.headerRowHeight,
       headerHeight: this.state.headerHeight,
       bodyHeight: this.state.bodyHeight,
       bodyWidth: this.state.bodyWidth,
@@ -1089,8 +1089,8 @@ export default class FlexiGrid extends React.Component {
     const props = {
       prefixCls: this.props.prefixCls,
       knobSize: this.props.reorderKnobSize,
-      rowHeight: this.props.rowHeight,
       headerHeight: this.state.headerHeight,
+      headerRowHeight: this.props.headerRowHeight,
       bodyWidth: this.state.bodyWidth,
       scrollX: this.state.scrollX,
       showScrollbarX: this.state.showScrollbarX,
