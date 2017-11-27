@@ -209,7 +209,7 @@ export default class FlexiGrid extends React.Component {
     this.didScrollStop()
   }
 
-  doHorizontalScroll(scrollX, relative) { // eslint-disable-line
+  getStateAfterHorizontalScroll(scrollX, relative) {
     const scrollState = relative
       ? this.horizontalScrollHelper.scrollBy(Math.round(scrollX))
       : this.horizontalScrollHelper.scrollTo(Math.round(scrollX))
@@ -229,13 +229,17 @@ export default class FlexiGrid extends React.Component {
       scrollState.offset,
     )
 
-    this.setNextState({
+    return {
       firstColumnIndex: scrollState.index,
       firstColumnOffset: scrollState.offset,
       scrollX: scrollState.position,
       maxScrollX,
       scrollableColumnsToRender,
-    })
+    }
+  }
+
+  doHorizontalScroll(scrollX, relative) { // eslint-disable-line
+    this.setNextState(this.getStateAfterHorizontalScroll(scrollX, relative))
   }
 
   doVerticalScroll(scrollY, relative) { // eslint-disable-line
@@ -344,7 +348,7 @@ export default class FlexiGrid extends React.Component {
     this.contentHeight = contentHeight
   }
 
-  onColumnResize = ({ column, knobSize, left, top, rtl, adjustKnob }, e) => {
+  onColumnResize = ({ column, knobSize, left, top, rtl, adjustKnob }, e) => { // eslint-disable-line
     const { headerHeight, bodyHeight } = this.state
     this.columnResizingData = {
       prefixCls: this.props.prefixCls,
@@ -392,8 +396,12 @@ export default class FlexiGrid extends React.Component {
     this.columnWidthMap[columnKey] = columnWidth
     this.columnResizingData = null
 
+    const nextState = this.calculateState(this.props, this.state)
+
     this.setNextState({
-      ...this.calculateState(this.props, this.state),
+      ...nextState,
+      // update the scrollable columns to render
+      ...this.getStateAfterHorizontalScroll(nextState.scrollX, false),
       columnResizingKey: null,
     })
   }
