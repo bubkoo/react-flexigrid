@@ -3,7 +3,7 @@ import FakeObjectDataListStore from './helpers/FakeObjectDataListStore'
 import FlexiGrid from '../lib/FlexiGrid'
 import '../assets/flexigrid.css'
 
-export default class ObjectData extends React.Component {
+export default class ResizableColumns extends React.Component {
   state = {
     data: new FakeObjectDataListStore(1000000),
   }
@@ -15,7 +15,6 @@ export default class ObjectData extends React.Component {
         dataIndex: 'id',
         width: 64,
         resizable: false,
-        reorderable: false,
       },
       {
         title: 'FirstName',
@@ -28,32 +27,6 @@ export default class ObjectData extends React.Component {
         dataIndex: 'lastName',
         minWidth: 80,
         width: 120,
-      },
-      {
-        title: 'Age',
-        dataIndex: 'age',
-        width: 64,
-        align: 'right',
-      },
-      {
-        title: 'Email',
-        dataIndex: 'email',
-        width: 220,
-      },
-      {
-        title: 'Phone',
-        dataIndex: 'phone',
-        width: 160,
-      },
-      {
-        title: 'City',
-        dataIndex: 'city',
-        width: 160,
-      },
-      {
-        title: 'Street',
-        dataIndex: 'street',
-        width: 160,
       },
       {
         title: 'CompanyName',
@@ -75,8 +48,10 @@ export default class ObjectData extends React.Component {
         data={this.state.data}
         columns={columns}
         bordered
-        reorderable
         resizable
+        onColumnResize={(columnKey, columnWidth) => { console.log(`Column '${columnKey}' start resize, current width: ${columnWidth}px`) }}
+        onColumnResizing={(columnKey, columnWidth) => { console.log(`Column '${columnKey}' resizing, current width: ${columnWidth}px`) }}
+        onColumnResized={(columnKey, columnWidth) => { console.log(`Column '${columnKey}' stop resize, current width: ${columnWidth}px`) }}
         width={1200}
         height={500}
       />
