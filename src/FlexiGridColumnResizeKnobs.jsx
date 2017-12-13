@@ -13,6 +13,7 @@ export default class FlexiGridColumnResizeKnobs extends React.Component {
     knobSize: PropTypes.number.isRequired,
     scrollX: PropTypes.number.isRequired,
     showScrollbarX: PropTypes.bool.isRequired,
+    isJustFullfill: PropTypes.bool.isRequired,
     leftFixedLeafColumns: propTypes.columns.isRequired,
     scrollableLeafColumns: propTypes.columns.isRequired,
     rightFixedLeafColumns: propTypes.columns.isRequired,
@@ -26,7 +27,7 @@ export default class FlexiGridColumnResizeKnobs extends React.Component {
     return !shallowEqual(this.props, nextProps)
   }
 
-  renderResizeKnob(column, leftColumnsWidth, scrollable, isRightFixed) {
+  renderResizeKnob(column, leftColumnsWidth, scrollable, isRightFixed, shouldFixLastKnobPos) {
     if (column.resizable === false) {
       return null
     }
@@ -38,6 +39,7 @@ export default class FlexiGridColumnResizeKnobs extends React.Component {
       bodyWidth,
       scrollX,
       showScrollbarX,
+      rightFixedLeafColumns,
       leftFixedColumnsWidth,
       scrollableColumnsWidth,
       rightFixedColumnsWidth,
@@ -68,6 +70,11 @@ export default class FlexiGridColumnResizeKnobs extends React.Component {
       left: leftColumnsWidth - column.width - (scrollable ? scrollX : 0),
     }
 
+    if (shouldFixLastKnobPos && column.isLastLeaf) {
+      style.left += 1
+      data.left += 1
+    }
+
     if (showScrollbarX) {
       if (scrollable) {
         if (
@@ -78,7 +85,10 @@ export default class FlexiGridColumnResizeKnobs extends React.Component {
         }
 
         // When the last scrollable column reach maxScrollX
-        if (column.isLastLeaf && offsetLeft === bodyWidth - rightFixedColumnsWidth) {
+        if (column.isLastLeaf &&
+          offsetLeft === bodyWidth - rightFixedColumnsWidth &&
+          rightFixedLeafColumns.length > 0
+        ) {
           style.left -= knobSize
           // Adjust the last scrollable column's resize-knob position when
           // reach the maxScrollX to avoid non-interactive.
@@ -111,26 +121,40 @@ export default class FlexiGridColumnResizeKnobs extends React.Component {
   }
 
   render() {
-    const { leftFixedLeafColumns, scrollableLeafColumns, rightFixedLeafColumns } = this.props
+    const {
+      leftFixedLeafColumns,
+      scrollableLeafColumns,
+      rightFixedLeafColumns,
+      showScrollbarX,
+      isJustFullfill,
+    } = this.props
+
+    const shouldFixLastKnobPos = showScrollbarX || isJustFullfill
     let width = 0
     return (
       <div className={`${this.props.prefixCls}-resize-wrap`}>
         {
           leftFixedLeafColumns.map((column) => {
             width += column.width
-            return this.renderResizeKnob(column, width, false)
+            return this.renderResizeKnob(column, width, false, false,
+              shouldFixLastKnobPos &&
+              scrollableLeafColumns.length === 0 &&
+              rightFixedLeafColumns.length === 0,
+            )
           })
         }
         {
           scrollableLeafColumns.map((column) => {
             width += column.width
-            return this.renderResizeKnob(column, width, true)
+            return this.renderResizeKnob(column, width, true, false,
+              shouldFixLastKnobPos && rightFixedLeafColumns.length === 0,
+            )
           })
         }
         {
           rightFixedLeafColumns.map((column) => {
             width += column.width
-            return this.renderResizeKnob(column, width, false, true)
+            return this.renderResizeKnob(column, width, false, true, false)
           })
         }
       </div>

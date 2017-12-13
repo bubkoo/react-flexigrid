@@ -144,6 +144,9 @@
   left: 0;
   top: 0;
 }
+.flexi-grid .flexi-grid-resize-wrap {
+  z-index: 999;
+}
 .flexi-grid .flexi-grid-resize-wrap .flexi-grid-resize-knob {
   position: absolute;
   cursor: ew-resize;

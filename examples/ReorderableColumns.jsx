@@ -1,6 +1,6 @@
 import React from 'react'
 import FakeObjectDataListStore from './helpers/FakeObjectDataListStore'
-import FlexiGrid from '../lib/FlexiGrid'
+import FlexiGrid from '../src/FlexiGrid'
 import '../assets/flexigrid.css'
 
 export default class ReorderableColumns extends React.Component {

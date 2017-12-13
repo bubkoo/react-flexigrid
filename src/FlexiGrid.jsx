@@ -1105,6 +1105,7 @@ export default class FlexiGrid extends React.Component {
       bodyWidth: this.state.bodyWidth,
       scrollX: this.state.scrollX,
       showScrollbarX: this.state.showScrollbarX,
+      isJustFullfill: this.state.isJustFullfill,
       leftFixedLeafColumns: columnData.leftFixedLeafColumns,
       scrollableLeafColumns: columnData.scrollableLeafColumns,
       rightFixedLeafColumns: columnData.rightFixedLeafColumns,
