@@ -804,7 +804,7 @@ export default class FlexiGrid extends React.Component {
       columnResizingKey: oldState && oldState.columnResizingKey || null,
       columnReorderingKey: oldState && oldState.columnReorderingKey || null,
 
-      width: this.props.width,
+      width: props.width,
       height,
       rowHeight,
       useMaxHeight,
