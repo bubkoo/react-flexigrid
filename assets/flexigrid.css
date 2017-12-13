@@ -136,6 +136,7 @@
   border-left: 1px solid transparent;
   background: linear-gradient(to right, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
 }
+.flexi-grid .flexi-grid-sort-wrap,
 .flexi-grid .flexi-grid-resize-wrap,
 .flexi-grid .flexi-grid-reorder-wrap,
 .flexi-grid .flexi-grid-reorder-handler {
@@ -267,6 +268,50 @@
   border-width: 6px 0 6px 6px;
   border-color: transparent transparent transparent #108ee9;
 }
+.flexi-grid .flexi-grid-sort-knob {
+  position: absolute;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  margin-left: -16px;
+  margin-top: -8px;
+}
+.flexi-grid .flexi-grid-sort-knob .sort-asc,
+.flexi-grid .flexi-grid-sort-knob .sort-desc {
+  content: ' ';
+  position: absolute;
+  left: 4px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  line-height: 1;
+  transition: all 0.3s;
+  border-radius: 4px;
+}
+.flexi-grid .flexi-grid-sort-knob .sort-asc {
+  top: 3px;
+  border-width: 0 4px 4px 4px;
+  border-color: transparent transparent rgba(0, 0, 0, 0.45) transparent;
+}
+.flexi-grid .flexi-grid-sort-knob .sort-asc.on,
+.flexi-grid .flexi-grid-sort-knob .sort-asc.on:hover {
+  border-bottom-color: #108ee9;
+}
+.flexi-grid .flexi-grid-sort-knob .sort-asc:hover {
+  border-bottom-color: rgba(0, 0, 0, 0.65);
+}
+.flexi-grid .flexi-grid-sort-knob .sort-desc {
+  bottom: 3px;
+  border-width: 4px 4px 0 4px;
+  border-color: rgba(0, 0, 0, 0.45) transparent transparent transparent;
+}
+.flexi-grid .flexi-grid-sort-knob .sort-desc.on,
+.flexi-grid .flexi-grid-sort-knob .sort-desc.on:hover {
+  border-top-color: #108ee9;
+}
+.flexi-grid .flexi-grid-sort-knob .sort-desc:hover {
+  border-top-color: rgba(0, 0, 0, 0.65);
+}
 .flexi-grid-scroll {
   position: absolute;
   outline: none;
@@ -360,4 +405,11 @@
 .flexi-grid.reorderable .flexi-grid-header .flexi-grid-cell-content,
 .flexi-grid.reorderable .flexi-grid-reorder-handler > .drag-proxy .flexi-grid-cell-content {
   padding-left: 20px;
+}
+.flexi-grid.sortable .flexi-grid-header .flexi-grid-cell.unsortable .flexi-grid-cell-content {
+  padding-right: 8px;
+}
+.flexi-grid.sortable .flexi-grid-header .flexi-grid-cell-content,
+.flexi-grid.sortable .flexi-grid-reorder-handler > .drag-proxy .flexi-grid-cell-content {
+  padding-right: 16px;
 }

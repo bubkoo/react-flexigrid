@@ -88,14 +88,11 @@ export default class FlexiGridCellGroup extends React.Component {
       left: 0,
       align: align || 'center',
       render: title,
-    }
-
-    if (column.reorderable === false) {
-      cellProps.className = 'unreorderable'
-    }
-
-    if (fixLastColumn && isLastLeaf) {
-      cellProps.className = NO_RIGHT_BORDR
+      className: classNames({
+        unsortable: column.sortable === false,
+        unreorderable: column.reorderable === false,
+        [NO_RIGHT_BORDR]: fixLastColumn && isLastLeaf,
+      }),
     }
 
     return (
@@ -148,6 +145,7 @@ export default class FlexiGridCellGroup extends React.Component {
           align,
           render: title,
           className: {
+            unsortable: column.sortable === false,
             unreorderable: column.reorderable === false,
           },
         }

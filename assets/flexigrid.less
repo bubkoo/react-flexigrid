@@ -168,6 +168,7 @@
     background: linear-gradient(to right, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
   }
 
+  .@{prefix}-sort-wrap,
   .@{prefix}-resize-wrap,
   .@{prefix}-reorder-wrap,
   .@{prefix}-reorder-handler {
@@ -324,6 +325,58 @@
       }
     }
   }
+
+  .@{prefix}-sort-knob {
+    position: absolute;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    margin-left: -16px;
+    margin-top: -8px;
+
+    .sort-asc,
+    .sort-desc {
+      content: ' ';
+      position: absolute;
+      left: 4px;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      line-height: 1;
+      transition: all 0.3s;
+      border-radius: 4px;
+    }
+
+    .sort-asc {
+      top: 3px;
+      border-width: 0 4px 4px 4px;
+      border-color: transparent transparent rgba(0, 0, 0, 0.45) transparent;
+
+      &.on,
+      &.on:hover {
+        border-bottom-color: @border-color-highlight;
+      }
+
+      &:hover {
+        border-bottom-color: rgba(0, 0, 0, 0.65);
+      }
+    }
+
+    .sort-desc {
+      bottom: 3px;
+      border-width: 4px 4px 0 4px;
+      border-color: rgba(0, 0, 0, 0.45) transparent transparent transparent;
+
+      &.on,
+      &.on:hover {
+        border-top-color: @border-color-highlight;
+      }
+
+      &:hover {
+        border-top-color: rgba(0, 0, 0, 0.65);
+      }
+    }
+  }
 }
 
 .@{prefix}-scroll {
@@ -439,6 +492,19 @@
   .@{prefix}-reorder-handler > .drag-proxy {
     .@{prefix}-cell-content {
       padding-left: 20px;
+    }
+  }
+}
+
+.@{prefix}.sortable {
+  .@{prefix}-header .@{prefix}-cell.unsortable .@{prefix}-cell-content {
+    padding-right: 8px;
+  }
+
+  .@{prefix}-header,
+  .@{prefix}-reorder-handler > .drag-proxy {
+    .@{prefix}-cell-content {
+      padding-right: 16px;
     }
   }
 }

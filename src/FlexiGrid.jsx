@@ -17,6 +17,7 @@ import FlexiGridShadowTop from './FlexiGridShadowTop'
 import FlexiGridShadowLeft from './FlexiGridShadowLeft'
 import FlexiGridShadowRight from './FlexiGridShadowRight'
 import FlexiGridShadowBottom from './FlexiGridShadowBottom'
+import FlexiGridSortKnobs from './FlexiGridSortKnobs'
 import FlexiGridColumnResizeKnobs from './FlexiGridColumnResizeKnobs'
 import FlexiGridColumnReorderKnobs from './FlexiGridColumnReorderKnobs'
 import FlexiGridColumnResizeHandler from './FlexiGridColumnResizeHandler'
@@ -82,6 +83,13 @@ export default class FlexiGrid extends React.Component {
     onRowMouseEnter: PropTypes.func,
     onRowMouseLeave: PropTypes.func,
 
+    sortable: PropTypes.bool,
+    sortType: PropTypes.oneOf(['asc', 'desc']),
+    sortColumnKey: PropTypes.string,
+
+    sortKnobSize: PropTypes.number,
+    onColumnSort: PropTypes.func,
+
     resizable: PropTypes.bool,
     resizeKnobSize: PropTypes.number,
     onColumnResize: PropTypes.func,
@@ -110,6 +118,11 @@ export default class FlexiGrid extends React.Component {
     showScrollbarY: true,
     touchScrollEnabled: false,
     stopScrollPropagation: false,
+
+    sortable: false,
+    sortType: 'asc',
+    sortColumnKey: null,
+    sortKnobSize: 12,
 
     resizable: false,
     resizeKnobSize: 13,
@@ -500,6 +513,12 @@ export default class FlexiGrid extends React.Component {
 
   isColumnReordering() {
     return this.state.columnReorderingKey != null
+  }
+
+  onColumnSort = (column, type) => {
+    if (this.props.onColumnSort) {
+      this.props.onColumnSort(column, type)
+    }
   }
 
   setNextState(nextState) {
@@ -1127,6 +1146,31 @@ export default class FlexiGrid extends React.Component {
     )
   }
 
+  renderColumnSortKnobs() {
+    const { columnData } = this.state
+
+    const props = {
+      prefixCls: this.props.prefixCls,
+      knobSize: this.props.sortKnobSize,
+      sortType: this.props.sortType,
+      sortColumnKey: this.props.sortColumnKey,
+      headerRowHeight: this.props.headerRowHeight,
+      headerHeight: this.state.headerHeight,
+      bodyWidth: this.state.bodyWidth,
+      scrollX: this.state.scrollX,
+      showScrollbarX: this.state.showScrollbarX,
+      leftFixedColumns: columnData.leftFixedColumns,
+      scrollableColumns: columnData.scrollableColumns,
+      rightFixedColumns: columnData.rightFixedColumns,
+      leftFixedColumnsWidth: columnData.leftFixedColumnsWidth,
+      scrollableColumnsWidth: columnData.scrollableColumnsWidth,
+      rightFixedColumnsWidth: columnData.rightFixedColumnsWidth,
+      onSort: this.onColumnSort,
+    }
+
+    return <FlexiGridSortKnobs {...props} />
+  }
+
   renderScrollbar() {
     const state = this.state
     const props = this.props
@@ -1167,11 +1211,11 @@ export default class FlexiGrid extends React.Component {
     const state = this.state
     const props = this.props
 
-    const { prefixCls, className, bordered, reorderable } = props
+    const { prefixCls, className, bordered, reorderable, sortable } = props
     const mainClassNames = classNames(
       prefixCls,
       className,
-      { bordered, reorderable },
+      { bordered, reorderable, sortable },
     )
 
     const { verticalScrollbar, horizontalScrollbar } = this.renderScrollbar()
@@ -1204,6 +1248,7 @@ export default class FlexiGrid extends React.Component {
           {this.props.reorderable && this.renderReorderKnobs()}
           {this.props.resizable && this.renderColumnResizeHandler()}
           {this.props.reorderable && this.renderColumnReorderHandler()}
+          {this.props.sortable && this.renderColumnSortKnobs()}
         </div>
         {verticalScrollbar}
         {horizontalScrollbar}
