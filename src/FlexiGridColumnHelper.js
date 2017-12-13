@@ -196,6 +196,84 @@ function sortColumns(columns: Array, orderMap = {}): Array {
   return columns
 }
 
+export function shrinkColumnsWidth(columnData, exceedWidth) {
+  const {
+    growCount,
+    leftFixedLeafColumns,
+    scrollableLeafColumns,
+    rightFixedLeafColumns,
+  } = columnData
+  const columnCount =
+    leftFixedLeafColumns.length +
+    scrollableLeafColumns.length +
+    rightFixedLeafColumns.length
+
+  const divideEqually = growCount === 0
+  const factor = exceedWidth / (divideEqually ? columnCount : growCount)
+
+  const calc = (columns, unAssignedWidth, isLast) => {
+    let assigned = 0
+    let unassigned = unAssignedWidth
+    const length = columns.length
+
+    columns.forEach((column, index) => {
+      const grow = divideEqually ? 1 : column.flexGrow
+      let growWidth = Math.round(factor * grow)
+      if (unassigned - growWidth < 0) {
+        growWidth = unassigned
+      }
+
+      if (isLast && index === length - 1) {
+        growWidth = unassigned
+      }
+
+      if (growWidth && unassigned) {
+        assigned += growWidth
+        unassigned -= growWidth
+
+        column.width -= growWidth
+        let parent = column.parent
+        while (parent) {
+          parent.width -= growWidth
+          parent = parent.parent
+        }
+      }
+    })
+
+    return {
+      assigned,
+      unassigned,
+    }
+  }
+
+  let { assigned, unassigned } = calc(
+    leftFixedLeafColumns,
+    exceedWidth,
+    scrollableLeafColumns.length === 0 && rightFixedLeafColumns.length === 0,
+  )
+
+  if (assigned > 0) {
+    columnData.leftFixedColumnsWidth -= assigned
+  }
+  if (unassigned > 0) {
+    const ret = calc(scrollableLeafColumns, unassigned, rightFixedLeafColumns.length === 0)
+    assigned = ret.assigned
+    unassigned = ret.unassigned
+  }
+
+  if (assigned > 0) {
+    columnData.scrollableColumnsWidth -= assigned
+  }
+  if (unassigned) {
+    const ret = calc(rightFixedLeafColumns, unassigned, true)
+    assigned = ret.assigned
+  }
+
+  if (assigned > 0) {
+    columnData.rightFixedColumnsWidth -= assigned
+  }
+}
+
 export function parseColumns(
   columns: Array,
   {
@@ -274,6 +352,7 @@ export function parseColumns(
     leftFixedColumnsWidth: getColumnsWidth(leftFixedColumns),
     scrollableColumnsWidth: getColumnsWidth(scrollableColumns),
     rightFixedColumnsWidth: getColumnsWidth(rightFixedColumns),
+    growCount,
     depth,
   }
 }

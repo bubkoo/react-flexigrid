@@ -27,7 +27,7 @@ export default class FlexiGridCellGroup extends React.Component {
     leafColumnsToRender: propTypes.columns,
     columnsUpdated: PropTypes.bool,
     columnsToRenderUpdated: PropTypes.bool,
-    fixLastColumn: PropTypes.bool,
+    fixLastColumnBorder: PropTypes.bool,
   }
 
   componentWillMount() {
@@ -50,7 +50,7 @@ export default class FlexiGridCellGroup extends React.Component {
       leafColumnsToRender,
       record,
       rowIndex,
-      fixLastColumn,
+      fixLastColumnBorder,
     } = this.props
 
     let left = 0
@@ -69,7 +69,7 @@ export default class FlexiGridCellGroup extends React.Component {
         render,
       }
 
-      if (fixLastColumn && isLastLeaf) {
+      if (fixLastColumnBorder && isLastLeaf) {
         cellProps.className = NO_RIGHT_BORDR
       }
 
@@ -79,7 +79,7 @@ export default class FlexiGridCellGroup extends React.Component {
   }
 
   renderHeaderMergedCells(height, left, column) {
-    const { prefixCls, rowHeight, fixLastColumn } = this.props
+    const { prefixCls, rowHeight, fixLastColumnBorder } = this.props
     const { children, width, title, align, isLastLeaf, key } = column
     const cellProps = {
       prefixCls,
@@ -91,7 +91,7 @@ export default class FlexiGridCellGroup extends React.Component {
       className: classNames({
         unsortable: column.sortable === false,
         unreorderable: column.reorderable === false,
-        [NO_RIGHT_BORDR]: fixLastColumn && isLastLeaf,
+        [NO_RIGHT_BORDR]: fixLastColumnBorder && isLastLeaf,
       }),
     }
 
@@ -116,7 +116,7 @@ export default class FlexiGridCellGroup extends React.Component {
               prefixCls,
               height: height - rowHeight,
               columns: children,
-              fixLastColumn,
+              fixLastColumnBorder,
             })
           }
         </div>
@@ -125,7 +125,7 @@ export default class FlexiGridCellGroup extends React.Component {
   }
 
   renderHeaderCells(props = this.props) {
-    const { prefixCls, height, columns, fixLastColumn } = props
+    const { prefixCls, height, columns, fixLastColumnBorder } = props
 
     let left = 0
 
@@ -150,7 +150,7 @@ export default class FlexiGridCellGroup extends React.Component {
           },
         }
 
-        if (fixLastColumn && isLastLeaf) {
+        if (fixLastColumnBorder && isLastLeaf) {
           cellProps.className[NO_RIGHT_BORDR] = true
         }
 

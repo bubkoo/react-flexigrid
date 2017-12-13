@@ -5,7 +5,7 @@ import '../assets/flexigrid.css'
 
 export default class FluidColumnWidth extends React.Component {
   state = {
-    data: new FakeObjectDataListStore(10),
+    data: new FakeObjectDataListStore(100000),
   }
 
   render() {

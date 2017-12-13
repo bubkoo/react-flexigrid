@@ -23,7 +23,7 @@ import FlexiGridColumnReorderKnobs from './FlexiGridColumnReorderKnobs'
 import FlexiGridColumnResizeHandler from './FlexiGridColumnResizeHandler'
 import FlexiGridColumnReorderHandler from './FlexiGridColumnReorderHandler'
 import { debounce, clamp, deepEqual } from './utils'
-import { getColumnsWidth, parseColumns } from './FlexiGridColumnHelper'
+import { getColumnsWidth, parseColumns, shrinkColumnsWidth } from './FlexiGridColumnHelper'
 
 
 export default class FlexiGrid extends React.Component {
@@ -711,6 +711,7 @@ export default class FlexiGrid extends React.Component {
     // size for content
     const contentWidth = getColumnsWidth(columnData.columns)
     const contentHeight = this.verticalScrollHelper.getContentHeight()
+    const isJustFullfill = contentWidth === viewportWidth
     const showScrollbarX = contentWidth > viewportWidth + borderSize
     const showScrollbarY = contentHeight > viewportHeight
     const reservedHeight = props.footerHeight
@@ -723,6 +724,10 @@ export default class FlexiGrid extends React.Component {
     let height = Math.round(realUseHeight)
     if (useMaxHeight && !showScrollbarY) {
       height = requiredHeight
+    }
+
+    if (showScrollbarY && isJustFullfill) {
+      shrinkColumnsWidth(columnData, Scrollbar.SIZE)
     }
 
     // body's size excludes scrollbars
@@ -825,6 +830,7 @@ export default class FlexiGrid extends React.Component {
       maxScrollY,
       showScrollbarX,
       showScrollbarY,
+      isJustFullfill,
 
       // store these props for next compare
       scrollTop: props.scrollTop,
@@ -926,6 +932,7 @@ export default class FlexiGrid extends React.Component {
       scrollX,
       showScrollbarX,
       showScrollbarY,
+      isJustFullfill,
       scrollableColumnsToRender,
       scrollableLeafColumnsToRender,
       leftFixedColumnsUpdated,
@@ -953,6 +960,7 @@ export default class FlexiGrid extends React.Component {
       scrollX,
       showScrollbarX,
       showScrollbarY,
+      isJustFullfill,
 
       leftFixedColumns,
       scrollableColumns,

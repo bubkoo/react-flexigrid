@@ -13,6 +13,7 @@ export default class FlexiGridBufferedRows extends React.Component {
     scrollX: PropTypes.number,
     showScrollbarX: PropTypes.bool,
     showScrollbarY: PropTypes.bool,
+    isJustFullfill: PropTypes.bool,
 
     leftFixedColumns: propTypes.columns,
     scrollableColumns: propTypes.columns,

@@ -13,6 +13,7 @@ export default class FlexiGridBody extends React.Component {
     scrollX: PropTypes.number,
     showScrollbarX: PropTypes.bool,
     showScrollbarY: PropTypes.bool,
+    isJustFullfill: PropTypes.bool,
 
     width: PropTypes.number,
     height: PropTypes.number,
