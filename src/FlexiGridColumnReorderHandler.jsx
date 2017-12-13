@@ -244,14 +244,14 @@ export default class FlexiGridColumnReorderHandler extends React.Component {
 
   renderHeaderMergedCells(height, left, column) {
     const { prefixCls, headerRowHeight } = this.props
-    const { children, width, title, align, key } = column
+    const { children, width, title, key, align } = column
     const cellProps = {
       prefixCls,
       width,
       height: headerRowHeight,
       left: 0,
-      align: align || 'center',
       render: title,
+      align: align || 'center',
     }
 
     return (
@@ -284,7 +284,7 @@ export default class FlexiGridColumnReorderHandler extends React.Component {
     let left = 0
 
     return columns.map((column) => {
-      const { children, width, title, key } = column
+      const { children, width, title, key, align } = column
       let ret
 
       if (children) {
@@ -296,6 +296,7 @@ export default class FlexiGridColumnReorderHandler extends React.Component {
           width,
           height,
           left,
+          align,
           render: title,
         }
 
