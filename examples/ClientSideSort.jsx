@@ -1,12 +1,59 @@
 import React from 'react'
-import FakeObjectDataListStore from './helpers/FakeObjectDataListStore'
+import generateDataItem from './helpers/generateDataItem'
 import Avatar from './helpers/Avatar'
 import FlexiGrid from '../src/FlexiGrid'
 import '../assets/flexigrid.css'
 
 export default class ColumnGroups extends React.Component {
-  state = {
-    data: new FakeObjectDataListStore(1000000),
+  constructor(props) {
+    super(props)
+
+    this.data = []
+
+    for (let i = 0; i < 10000; i += 1) {
+      this.data.push(generateDataItem(i + 1))
+    }
+
+    this.state = {
+      data: this.data,
+      sortType: null,
+      sortColumnKey: null,
+    }
+  }
+
+
+  handleSort = (column, type) => {
+    if (this.state.sortColumnKey === column.key && this.state.sortType === type) {
+      this.setState({
+        data: this.data,
+        sortType: null,
+        sortColumnKey: null,
+      })
+    } else {
+      const data = this.data.slice()
+      data.sort((itemA, itemB) => {
+        const valueA = itemA[column.dataIndex]
+        const valueB = itemB[column.dataIndex]
+        let sortVal = 0
+        if (valueA > valueB) {
+          sortVal = 1
+        }
+        if (valueA < valueB) {
+          sortVal = -1
+        }
+        if (sortVal !== 0 && type === 'desc') {
+          sortVal *= -1
+        }
+
+        return sortVal
+      })
+
+      this.setState({
+        data,
+        sortType: type,
+        sortColumnKey: column.key,
+      })
+    }
   }
 
   render() {
@@ -17,6 +64,7 @@ export default class ColumnGroups extends React.Component {
         width: 64,
         reorderable: false,
         resizable: false,
+        sortable: false,
       },
       {
         title: 'Avatar',
@@ -27,6 +75,7 @@ export default class ColumnGroups extends React.Component {
         fixed: 'left',
         reorderable: false,
         resizable: false,
+        sortable: false,
       },
       {
         title: 'Name',
@@ -114,6 +163,10 @@ export default class ColumnGroups extends React.Component {
         bordered
         reorderable
         resizable
+        sortable
+        sortType={this.state.sortType}
+        sortColumnKey={this.state.sortColumnKey}
+        onColumnSort={this.handleSort}
         rowHeight={48}
         width={1200}
         height={500}
