@@ -1,12 +1,11 @@
 import React from 'react'
 import FakeObjectDataListStore from './helpers/FakeObjectDataListStore'
-import Avatar from './helpers/Avatar'
-import FlexiGrid from '../lib/FlexiGrid'
+import FlexiGrid from '../src/FlexiGrid'
 import '../assets/flexigrid.css'
 
 export default class FluidColumnWidth extends React.Component {
   state = {
-    data: new FakeObjectDataListStore(1000000),
+    data: new FakeObjectDataListStore(10),
   }
 
   render() {
@@ -15,6 +14,7 @@ export default class FluidColumnWidth extends React.Component {
         title: 'FirstName',
         dataIndex: 'firstName',
         width: 160,
+        fixed: 'left',
       },
       {
         title: 'Company(flexGrow greediness=1)',

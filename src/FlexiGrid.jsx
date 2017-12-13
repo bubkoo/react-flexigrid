@@ -799,6 +799,7 @@ export default class FlexiGrid extends React.Component {
       columnResizingKey: oldState && oldState.columnResizingKey || null,
       columnReorderingKey: oldState && oldState.columnReorderingKey || null,
 
+      width: this.props.width,
       height,
       rowHeight,
       useMaxHeight,
@@ -1228,7 +1229,10 @@ export default class FlexiGrid extends React.Component {
         onTouchEnd={this.touchHandler.onTouchEnd}
         onTouchMove={this.touchHandler.onTouchMove}
         onTouchCancel={this.touchHandler.onTouchCancel}
-        style={{ width: state.width, height: state.height }}
+        style={{
+          width: state.width,
+          height: state.height,
+        }}
       >
         <div
           className={`${prefixCls}-container`}

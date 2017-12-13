@@ -64,6 +64,14 @@ export default class FlexiGridRow extends React.Component {
     return shouldUpdateRow(this.props, nextProps)
   }
 
+  shouldFixLastColumn() {
+    return this.props.showScrollbarX ||
+      this.props.width ===
+      this.props.leftFixedColumnsWidth +
+      this.props.rightFixedColumnsWidth +
+      this.props.scrollableColumnsWidth
+  }
+
   renderLeftFixedColumns() {
     const {
       prefixCls,
@@ -107,7 +115,6 @@ export default class FlexiGridRow extends React.Component {
       isHeader,
       bordered,
       scrollX,
-      showScrollbarX,
       getColumnPosition,
       scrollableColumns,
       rightFixedColumns,
@@ -138,7 +145,10 @@ export default class FlexiGridRow extends React.Component {
       columnsToRender: scrollableColumnsToRender,
       leafColumnsToRender: scrollableLeafColumnsToRender,
       columnsToRenderUpdated: scrollableColumnsToRenderUpdated,
-      fixLastColumn: bordered && showScrollbarX && rightFixedColumns.length === 0,
+    }
+
+    if (bordered && rightFixedColumns.length === 0) {
+      props.fixLastColumn = this.shouldFixLastColumn()
     }
 
     return <FlexiGridCellGroup key="scrollable-columns" {...props} />
@@ -178,7 +188,10 @@ export default class FlexiGridRow extends React.Component {
       columns: rightFixedColumns,
       leafColumns: rightFixedLeafColumns,
       columnsUpdated: rightFixedColumnsUpdated,
-      fixLastColumn: bordered && showScrollbarX,
+    }
+
+    if (bordered) {
+      props.fixLastColumn = this.shouldFixLastColumn()
     }
 
     const leftGroupsWidth = leftFixedColumnsWidth + scrollableColumnsWidth
