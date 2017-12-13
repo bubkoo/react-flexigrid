@@ -248,24 +248,28 @@
   position: absolute;
   left: 0;
   top: 50%;
-  margin-top: -6px;
+  margin-top: -5px;
   content: '';
   width: 0;
   height: 0;
   border-style: solid;
+  border-radius: 5px;
 }
 .flexi-grid .flexi-grid-reorder-handler .target-marker.is-left {
   margin-left: 13px;
 }
 .flexi-grid .flexi-grid-reorder-handler .target-marker.is-left::after {
-  border-width: 6px 6px 6px 0;
+  border-width: 5px 5px 5px 0;
   border-color: transparent #108ee9 transparent transparent;
 }
 .flexi-grid .flexi-grid-reorder-handler .target-marker.is-right {
   margin-right: 1px;
 }
+.flexi-grid .flexi-grid-reorder-handler .target-marker.is-right.fix-position-sortable {
+  margin-right: 14px;
+}
 .flexi-grid .flexi-grid-reorder-handler .target-marker.is-right::after {
-  border-width: 6px 0 6px 6px;
+  border-width: 5px 0 5px 5px;
   border-color: transparent transparent transparent #108ee9;
 }
 .flexi-grid .flexi-grid-sort-knob {

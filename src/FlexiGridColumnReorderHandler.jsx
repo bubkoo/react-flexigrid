@@ -14,6 +14,7 @@ export default class FlexiGridColumnReorderHandler extends React.Component {
     column: propTypes.column,
     targets: propTypes.dropTarget,
     visible: PropTypes.bool,
+    sortable: PropTypes.bool,
     factor: PropTypes.number,
     width: PropTypes.number,
     height: PropTypes.number,
@@ -145,6 +146,7 @@ export default class FlexiGridColumnReorderHandler extends React.Component {
           ) {
             currentTarget = {
               targetKey: target.key,
+              targetSortable: this.sortable !== false,
               targetPosition: target.left,
               isLeftTarget: true,
               visible: target.leftSideVisible,
@@ -165,6 +167,7 @@ export default class FlexiGridColumnReorderHandler extends React.Component {
           ) {
             currentTarget = {
               targetKey: target.key,
+              targetSortable: this.sortable !== false,
               targetPosition: target.left + target.width,
               isLeftTarget: false,
               visible: target.rightSideVisible,
@@ -382,11 +385,12 @@ export default class FlexiGridColumnReorderHandler extends React.Component {
 
   renderDropMarker() {
     const { columnHeight, offsetTop, width } = this.props
-    const { targetKey, targetPosition, isLeftTarget } = this.state
+    const { targetKey, targetPosition, isLeftTarget, targetSortable } = this.state
     if (targetKey) {
       const className = classNames('target-marker', {
         'is-left': isLeftTarget,
         'is-right': !isLeftTarget,
+        'fix-position-sortable': !isLeftTarget && this.props.sortable && targetSortable,
       })
       const style = {
         height: columnHeight,

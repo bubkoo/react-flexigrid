@@ -299,11 +299,12 @@
         position: absolute;
         left: 0;
         top: 50%;
-        margin-top: -6px;
+        margin-top: -5px;
         content: '';
         width: 0;
         height: 0;
         border-style: solid;
+        border-radius: 5px;
       }
 
       &.is-left {
@@ -311,16 +312,19 @@
       }
 
       &.is-left::after {
-        border-width: 6px 6px 6px 0;
+        border-width: 5px 5px 5px 0;
         border-color: transparent @border-color-highlight transparent transparent;
       }
 
       &.is-right {
         margin-right: 1px;
+        &.fix-position-sortable {
+          margin-right: 14px;
+        }
       }
 
       &.is-right::after {
-        border-width: 6px 0 6px 6px;
+        border-width: 5px 0 5px 5px;
         border-color: transparent transparent transparent @border-color-highlight;
       }
     }

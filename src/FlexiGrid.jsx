@@ -1150,6 +1150,7 @@ export default class FlexiGrid extends React.Component {
     return (
       <FlexiGridColumnReorderHandler
         {...props}
+        sortable={this.props.sortable}
         visible={this.isColumnReordering()}
       />
     )
