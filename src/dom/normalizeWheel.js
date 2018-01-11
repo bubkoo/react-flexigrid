@@ -1,5 +1,5 @@
 import UAParser from 'ua-parser-js'
-import isEventSupported from 'react-dom/lib/isEventSupported'
+import isEventSupported from './isEventSupported'
 
 
 const uaParser = new UAParser()
